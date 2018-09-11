@@ -10,5 +10,9 @@ app_config.py
 # log files
 *.log
 
+# SQLite files
+*.sqlite
+*.db
+
 # PyCharm
 .idea/
