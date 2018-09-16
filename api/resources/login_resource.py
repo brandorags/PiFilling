@@ -11,11 +11,11 @@ login_resource = Blueprint('login_resource', __name__)
 
 
 @login_resource.route('/api/login', methods=['POST'])
-def login() -> None:
+def login() -> PiFillingUser:
     """
     Logs the user in.
 
-    :return: a generic success message wrapped in JSON
+    :return: the logged in user
     """
     try:
         data = request.get_json()
@@ -26,7 +26,7 @@ def login() -> None:
 
         if user and check_password_hash(user.password_hash, password):
             login_user(user, remember=False)
-            return ok({'message': 'User has logged in successfully.'})
+            return ok(user.to_json())
 
         return unauthorized()
     except Exception as e:
