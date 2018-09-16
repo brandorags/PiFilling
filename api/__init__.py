@@ -1,6 +1,7 @@
 import logging
 
 from flask import Flask, session
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 
@@ -15,6 +16,10 @@ logging.basicConfig(filename=app.config['LOG_FILE_LOC'], format='[%(levelname)s]
                     datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.WARNING)
 
 
+# allow CORS
+cors = CORS(app, supports_credentials=True, regex={r'/api/*': {'origins': '*'}})
+
+
 # init SQLAlchemy
 db = SQLAlchemy(app)
 
@@ -25,9 +30,11 @@ db.create_all()
 
 # register blueprints
 from api.resources.login_resource import login_resource
+from api.resources.logout_resource import logout_resource
 from api.resources.admin_resource import admin_resource
 
 app.register_blueprint(login_resource)
+app.register_blueprint(logout_resource)
 app.register_blueprint(admin_resource)
 
 
