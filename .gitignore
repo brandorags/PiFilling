@@ -2,7 +2,7 @@
 venv/
 
 # config file
-app_config.py
+# app_config.py
 
 # Python bytecode files
 *.pyc
