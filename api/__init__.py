@@ -49,10 +49,12 @@ db.create_all()
 # register blueprints
 from api.resources.login_resource import login_resource
 from api.resources.logout_resource import logout_resource
+from api.resources.file_resource import file_resource
 from api.resources.admin_resource import admin_resource
 
 app.register_blueprint(login_resource)
 app.register_blueprint(logout_resource)
+app.register_blueprint(file_resource)
 app.register_blueprint(admin_resource)
 
 
