@@ -1,6 +1,12 @@
 # virtualenv
 venv/
 
+# PyCharm
+.idea/
+
+# test file upload folder
+files/
+
 # config file
 # app_config.py
 
@@ -13,6 +19,3 @@ venv/
 # SQLite files
 *.sqlite
 *.db
-
-# PyCharm
-.idea/

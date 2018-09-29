@@ -35,6 +35,12 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 # path of log file
 LOG_FILE_LOC = os.path.join(BASE_DIR, 'info.log')
 
+# file upload folder
+UPLOADED_FILES_DEST = BASE_DIR + '/files'
+
+# URL where files are made publicly available
+UPLOADED_FILES_URL = 'http://localhost:5000/'
+
 # database location
 SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'pifilling.db')
 
