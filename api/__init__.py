@@ -19,6 +19,7 @@
 import logging
 
 from flask import Flask, session
+from flask_uploads import UploadSet, ALL, configure_uploads, patch_request_class
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -28,6 +29,11 @@ from flask_login import LoginManager
 app = Flask(__name__)
 app.config.from_pyfile('../app_config.py')
 
+
+# init Flask-Uploads
+files_upload_set = UploadSet('files', ALL)
+configure_uploads(app, files_upload_set)
+patch_request_class(app, size=5000000000)
 
 # init logging
 logging.basicConfig(filename=app.config['LOG_FILE_LOC'], format='[%(levelname)s] %(asctime)s: %(message)s',
