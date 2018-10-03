@@ -19,3 +19,4 @@ files/
 # SQLite files
 *.sqlite
 *.db
+*.db-journal
