@@ -18,6 +18,7 @@
 
 import traceback
 
+from typing import Dict
 from flask import request, Blueprint
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
@@ -29,9 +30,9 @@ from api.database.models import PiFillingUser
 admin_resource = Blueprint('admin_resource', __name__)
 
 
-@admin_resource.route('/api/admin', methods=['POST'])
+@admin_resource.route('/api/admin/create-user', methods=['POST'])
 @login_required
-def create_user() -> None:
+def create_user() -> Dict:
     """
     Creates a new user. The user who accesses this endpoint
     must have admin privileges.
