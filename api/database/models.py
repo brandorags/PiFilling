@@ -20,6 +20,7 @@ from api import db
 
 from typing import Dict
 from flask_login import UserMixin
+from sqlalchemy.sql import func
 
 
 class PiFillingUser(UserMixin, db.Model):
@@ -27,7 +28,7 @@ class PiFillingUser(UserMixin, db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     username = db.Column(db.String, nullable=False, unique=True)
     password_hash = db.Column(db.String, nullable=False)
-    is_admin = db.Column(db.Boolean())
+    is_admin = db.Column(db.Boolean)
 
     def to_json(self) -> Dict:
         """
@@ -40,4 +41,27 @@ class PiFillingUser(UserMixin, db.Model):
         return {
             'username': self.username,
             'isAdmin': self.is_admin
+        }
+
+
+class FileMetadata(db.Model):
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('pifilling_user.id'), index=True, nullable=False)
+    path = db.Column(db.String)
+    filename = db.Column(db.String, nullable=False, unique=True)
+    save_date = db.Column(db.DateTime, server_default=func.now(),  nullable=False)
+    update_date = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    def to_json(self) -> Dict:
+        """
+        Returns a dictionary with keys in the JSON standard
+        camel case format.
+
+        :return: a JSON safe version of FileMetadata that
+        doesn't contain the file's ID or associated
+        user ID
+        """
+        return {
+            'path': self.path,
+            'filename': self.filename
         }
