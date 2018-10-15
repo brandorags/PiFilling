@@ -18,6 +18,7 @@
 
 import traceback
 
+from typing import Dict
 from flask import Blueprint
 from flask_login import login_required, logout_user
 from api.util.http_response_wrapper import ok, internal_server_error
@@ -28,7 +29,7 @@ logout_resource = Blueprint('logout_resource', __name__)
 
 @logout_resource.route('/api/logout', methods=['POST'])
 @login_required
-def logout() -> None:
+def logout() -> Dict:
     """
     Logs the user out.
 
