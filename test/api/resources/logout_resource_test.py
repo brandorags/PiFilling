@@ -1,7 +1,6 @@
 import unittest
 
 from werkzeug.security import generate_password_hash
-from flask_login import current_user
 from api import db
 from api.database.models import PiFillingUser
 from test.pifilling_test import PiFillingTest
