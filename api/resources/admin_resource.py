@@ -52,7 +52,7 @@ def create_user() -> Dict:
         db.session.add(new_user)
         db.session.commit()
 
-        return ok({'message': 'New user has been created.'})
+        return ok(new_user.to_json())
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
