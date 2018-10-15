@@ -1,3 +1,5 @@
+import logging
+
 from flask_testing import TestCase
 from api import app, db
 
@@ -8,6 +10,9 @@ class PiFillingTest(TestCase):
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+        logger = logging.getLogger()
+        logger.disabled = True
 
         return app
 
