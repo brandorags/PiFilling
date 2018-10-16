@@ -23,16 +23,17 @@ def upload_file() -> List[FileMetadata]:
         for f in files_to_upload:
             file = files_to_upload[f]
             result = files_upload_set.save(file, user.username)
-            split_result = result.rsplit('/', 1)
 
+            split_result = result.rsplit('/', 1)
             path = split_result[0]
             filename = split_result[1]
 
             saved_file = FileMetadata(user_id=user.id, path=path, filename=filename)
             saved_files.append(saved_file)
 
-        db.session.bulk_save_objects(saved_files)
-        db.session.commit()
+        if saved_files:
+            db.session.bulk_save_objects(saved_files)
+            db.session.commit()
 
         return ok([file.to_json() for file in saved_files])
     except Exception as e:
