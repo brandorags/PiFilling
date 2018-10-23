@@ -49,6 +49,7 @@ class FileMetadata(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('pifilling_user.id'), index=True, nullable=False)
     path = db.Column(db.String)
     filename = db.Column(db.String, nullable=False, unique=True)
+    file_size = db.Column(db.Integer)
     save_date = db.Column(db.DateTime, server_default=func.now(),  nullable=False)
     update_date = db.Column(db.DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
 
@@ -63,5 +64,6 @@ class FileMetadata(db.Model):
         """
         return {
             'path': self.path,
-            'filename': self.filename
+            'filename': self.filename,
+            'fileSize': self.file_size
         }
