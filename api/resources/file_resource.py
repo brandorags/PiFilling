@@ -57,3 +57,14 @@ def upload_file() -> List[FileMetadata]:
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
+
+
+@file_resource.route('new-folder', methods=['POST'])
+@login_required
+def create_new_folder() -> [str]:
+    try:
+        data = request.get_json()
+        return ok(data)
+    except Exception as e:
+        trace = traceback.format_exc()
+        return internal_server_error(e, trace)

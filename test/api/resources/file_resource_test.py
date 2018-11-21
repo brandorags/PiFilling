@@ -54,6 +54,23 @@ class FileResourceTest(PiFillingTest):
 
         self.assert401(data)
 
+    def test_create_new_file_success(self):
+        self._log_in_user()
+
+        data = self.client.post('/api/file/new-folder', json={
+            'name': 'Test Folder'
+        })
+        new_folder_json = data.get_json()
+
+        self.assertEqual(new_folder_json, {'name': 'Test Folder'})
+
+    def test_create_new_file_unauthorized(self):
+        data = self.client.post('/api/file/new-folder', json={
+            'name': 'Test Folder'
+        })
+
+        self.assert401(data)
+
     def _get_test_file(self):
         data = {'name': 'test_name', 'test_number': 14}
         data = {key: str(value) for key, value in data.items()}
