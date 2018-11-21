@@ -30,16 +30,16 @@ class FileResourceTest(PiFillingTest):
         if path_exists:
             shutil.rmtree(test_file_upload_folder_path)
 
-    def test_upload_file_success(self):
+    def test_upload_success(self):
         self._log_in_user()
         file = self._get_test_file()
 
         data = self.client.post('/api/file/upload', data=file, content_type='multipart/form-data')
         file_json = data.get_json()
 
-        self.assertEqual(file_json, [{'filename': 'test.txt', 'path': 'test_user'}])
+        self.assertEqual(file_json, [{'filename': 'test.txt', 'path': 'test_user', 'fileSize': 22}])
 
-    def test_upload_file_success_empty_data(self):
+    def test_upload_success_empty_data(self):
         self._log_in_user()
 
         data = self.client.post('/api/file/upload', content_type='multipart/form-data')
@@ -47,7 +47,7 @@ class FileResourceTest(PiFillingTest):
 
         self.assertEqual(file_json, [])
 
-    def test_upload_file_unauthorized(self):
+    def test_upload_unauthorized(self):
         file = self._get_test_file()
 
         data = self.client.post('/api/file/upload', data=file, content_type='multipart/form-data')

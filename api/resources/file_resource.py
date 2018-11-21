@@ -27,7 +27,7 @@ def get_file_metadata_list_for_path() -> List[FileMetadata]:
 
 @file_resource.route('upload', methods=['POST'])
 @login_required
-def upload_file() -> List[FileMetadata]:
+def upload() -> List[FileMetadata]:
     try:
         files_to_upload = request.files
         saved_files = []
