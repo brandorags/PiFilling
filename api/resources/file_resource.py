@@ -12,7 +12,7 @@ from api.database.models import FileMetadata
 file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')
 
 
-@file_resource.route('', methods=['GET'])
+@file_resource.route('file-metadata', methods=['GET'])
 @login_required
 def get_file_metadata_list_for_path() -> List[FileMetadata]:
     try:
