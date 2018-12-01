@@ -2,9 +2,10 @@ import traceback
 import os
 
 from typing import List
+from subprocess import run, SubprocessError
 from flask import request, Blueprint
 from flask_login import login_required, current_user
-from api import files_upload_set, db
+from api import app, files_upload_set, db
 from api.util.http_response_wrapper import ok, internal_server_error
 from api.database.models import FileMetadata
 
@@ -64,7 +65,18 @@ def upload() -> List[FileMetadata]:
 def create_new_folder() -> [str]:
     try:
         data = request.get_json()
-        return ok(data)
+        folder_name = data['name']
+        path = data['path']
+        base_path = app.config['UPLOADED_FILES_DEST']
+
+        create_new_folder_proc = run(['mkdir', base_path + path + folder_name], capture_output=True)
+        if create_new_folder_proc.returncode != 0:
+            raise SubprocessError(create_new_folder_proc.stderr)
+
+        return ok({
+            'name': folder_name,
+            'path': path
+        })
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
