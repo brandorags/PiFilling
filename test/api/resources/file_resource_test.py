@@ -54,18 +54,18 @@ class FileResourceTest(PiFillingTest):
 
         self.assert401(data)
 
-    def test_create_new_folder_success(self):
+    def test_create_new_directory_success(self):
         self._log_in_user()
 
         data = self.client.post('/api/file/new-folder', json={
             'name': '/test_user',
             'path': ''
         })
-        folder_full_name = data.get_json()
+        directory_full_name = data.get_json()
 
-        self.assertEqual(folder_full_name, {'name': '/test_user', 'path': ''})
+        self.assertEqual(directory_full_name, {'name': '/test_user', 'path': ''})
 
-    def test_create_new_folder_unauthorized(self):
+    def test_create_new_directory_unauthorized(self):
         data = self.client.post('/api/file/new-folder', json={
             'name': '/test_user',
             'path': ''

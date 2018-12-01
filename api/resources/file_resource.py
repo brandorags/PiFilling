@@ -60,21 +60,21 @@ def upload() -> List[FileMetadata]:
         return internal_server_error(e, trace)
 
 
-@file_resource.route('new-folder', methods=['POST'])
+@file_resource.route('new-directory', methods=['POST'])
 @login_required
-def create_new_folder() -> [str]:
+def create_new_directory() -> [str]:
     try:
         data = request.get_json()
-        folder_name = data['name']
+        directory_name = data['name']
         path = data['path']
         base_path = app.config['UPLOADED_FILES_DEST']
 
-        create_new_folder_proc = run(['mkdir', base_path + path + folder_name], capture_output=True)
-        if create_new_folder_proc.returncode != 0:
-            raise SubprocessError(create_new_folder_proc.stderr)
+        create_new_directory_proc = run(['mkdir', base_path + path + directory_name], capture_output=True)
+        if create_new_directory_proc.returncode != 0:
+            raise SubprocessError(create_new_directory_proc.stderr)
 
         return ok({
-            'name': folder_name,
+            'name': directory_name,
             'path': path
         })
     except Exception as e:
