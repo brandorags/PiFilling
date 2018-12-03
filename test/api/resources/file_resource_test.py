@@ -5,7 +5,7 @@ import io
 
 from werkzeug.security import generate_password_hash
 from api import db
-from api.database.models import PiFillingUser
+from api.database.db_models import PiFillingUser
 from test.pifilling_test import PiFillingTest
 
 
