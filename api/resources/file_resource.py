@@ -7,7 +7,7 @@ from flask import request, Blueprint
 from flask_login import login_required, current_user
 from api import app, files_upload_set, db
 from api.util.http_response_wrapper import ok, internal_server_error
-from api.database.models import FileMetadata
+from api.database.db_models import FileMetadata
 
 
 file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')
