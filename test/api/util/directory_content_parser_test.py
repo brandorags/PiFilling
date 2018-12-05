@@ -22,8 +22,6 @@ class DirectoryContentParserTest(unittest.TestCase):
         file_metadata_list = DirectoryContentParser.parse_directory_content('./temp_directory')
         file_metadata_first_item = file_metadata_list[0]
 
-        print(file_metadata_first_item.modified_date)
-
         self.assertEqual(len(file_metadata_list), 5)
         self.assertTrue(isinstance(file_metadata_first_item, FileMetadata))
         self.assertEqual(file_metadata_first_item.filename, 'temp0.txt')
