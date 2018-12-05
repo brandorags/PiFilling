@@ -8,6 +8,7 @@ from flask_login import login_required, current_user
 from api import app, files_upload_set, db
 from api.util.http_response_wrapper import ok, internal_server_error
 from api.database.db_models import FileMetadata
+from api.util.directory_content_parser import DirectoryContentParser
 
 
 file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')
@@ -18,7 +19,7 @@ file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')
 def get_file_metadata_list_for_path() -> List[FileMetadata]:
     try:
         path = request.args.get('path')
-        file_metadata_list = FileMetadata.query.filter_by(path=path).all()
+        file_metadata_list = DirectoryContentParser.parse_directory_content(path)
 
         return ok([metadata.to_json() for metadata in file_metadata_list])
     except Exception as e:
