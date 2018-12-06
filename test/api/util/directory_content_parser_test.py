@@ -30,6 +30,9 @@ class DirectoryContentParserTest(unittest.TestCase):
         self.assertIsNotNone(file_metadata_first_item.file_size)
         self.assertFalse(file_metadata_first_item.is_directory)
 
+    def test_parse_directory_content_error(self):
+        self.assertRaises(Exception, DirectoryContentParser.parse_directory_content, './nonexistent_directory')
+
 
 if __name__ == '__main__':
     unittest.main()
