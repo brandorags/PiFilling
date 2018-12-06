@@ -56,14 +56,28 @@ class FileResourceTest(PiFillingTest):
         self.assertIsNotNone(file_metadata_first_item['fileSize'])
         self.assertFalse(file_metadata_first_item['isDirectory'])
 
+    def test_get_file_metadata_list_for_path_unauthorized(self):
+        data = self.client.get('/api/file/file-metadata?path=temp_directory')
+
+        self.assert401(data)
+
     def test_upload_success(self):
         self._log_in_user()
         file = self._get_test_file()
 
         data = self.client.post('/api/file/upload', data=file, content_type='multipart/form-data')
-        file_json = data.get_json()
+        file_metadata_list = data.get_json()
+        file_metadata_first_item = file_metadata_list[0]
 
-        self.assertEqual(file_json, [{'filename': 'test.txt', 'path': 'test_user', 'fileSize': 22}])
+        self.assertEqual(len(file_metadata_list), 1)
+        self.assertTrue({'filename', 'fileSize', 'fileType', 'modifiedDate', 'isDirectory'} ==
+                        file_metadata_first_item.keys())
+
+        self.assertEqual(file_metadata_first_item['filename'], 'test.txt')
+        self.assertEqual(file_metadata_first_item['fileType'], '.txt')
+        self.assertIsNotNone(file_metadata_first_item['modifiedDate'])
+        self.assertIsNotNone(file_metadata_first_item['fileSize'])
+        self.assertFalse(file_metadata_first_item['isDirectory'])
 
     def test_upload_success_empty_data(self):
         self._log_in_user()
@@ -84,17 +98,17 @@ class FileResourceTest(PiFillingTest):
         self._log_in_user()
 
         data = self.client.post('/api/file/new-directory', json={
-            'name': '/test_user',
-            'path': ''
+            'name': 'test_directory',
+            'path': 'test_user/'
         })
         directory_full_name = data.get_json()
 
-        self.assertEqual(directory_full_name, {'name': '/test_user', 'path': ''})
+        self.assertEqual(directory_full_name, {'name': 'test_directory', 'path': 'test_user/'})
 
     def test_create_new_directory_unauthorized(self):
         data = self.client.post('/api/file/new-directory', json={
-            'name': '/test_user',
-            'path': ''
+            'name': 'test_directory',
+            'path': 'test_user/'
         })
 
         self.assert401(data)
