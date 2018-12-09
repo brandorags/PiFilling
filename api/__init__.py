@@ -47,7 +47,7 @@ cors = CORS(app, supports_credentials=True, regex={r'/api/*': {'origins': '*'}})
 # init SQLAlchemy
 db = SQLAlchemy(app)
 
-from api.database import models
+from api.database import db_models
 
 db.create_all()
 
@@ -71,7 +71,7 @@ login_manager.init_app(app)
 
 
 # implement session callback functions
-from api.database.models import PiFillingUser
+from api.database.db_models import PiFillingUser
 
 
 @login_manager.user_loader
