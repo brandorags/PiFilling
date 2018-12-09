@@ -2,10 +2,11 @@ import unittest
 import shutil
 import os
 import io
+import subprocess
 
 from werkzeug.security import generate_password_hash
 from api import db
-from api.database.models import PiFillingUser
+from api.database.db_models import PiFillingUser
 from test.pifilling_test import PiFillingTest
 
 
@@ -22,6 +23,12 @@ class FileResourceTest(PiFillingTest):
         db.session.add(user)
         db.session.commit()
 
+        temp_dir = 'temp_directory'
+        subprocess.run(['mkdir', temp_dir])
+        for i in range(0, 5):
+            with open(temp_dir + '/temp' + str(i) + '.txt', 'w') as file:
+                file.write('Test test test')
+
     def tearDown(self):
         super().tearDown()
 
@@ -30,14 +37,47 @@ class FileResourceTest(PiFillingTest):
         if path_exists:
             shutil.rmtree(test_file_upload_folder_path)
 
+        shutil.rmtree('temp_directory')
+
+    def test_get_file_metadata_list_for_path_success(self):
+        self._log_in_user()
+
+        data = self.client.get('/api/file/file-metadata?path=temp_directory')
+        file_metadata_list = data.get_json()
+        file_metadata_first_item = file_metadata_list[0]
+
+        self.assertEqual(len(file_metadata_list), 5)
+        self.assertTrue({'filename', 'fileSize', 'fileType', 'modifiedDate', 'isDirectory'} ==
+                        file_metadata_first_item.keys())
+
+        self.assertEqual(file_metadata_first_item['filename'], 'temp0.txt')
+        self.assertEqual(file_metadata_first_item['fileType'], '.txt')
+        self.assertIsNotNone(file_metadata_first_item['modifiedDate'])
+        self.assertIsNotNone(file_metadata_first_item['fileSize'])
+        self.assertFalse(file_metadata_first_item['isDirectory'])
+
+    def test_get_file_metadata_list_for_path_unauthorized(self):
+        data = self.client.get('/api/file/file-metadata?path=temp_directory')
+
+        self.assert401(data)
+
     def test_upload_success(self):
         self._log_in_user()
         file = self._get_test_file()
 
         data = self.client.post('/api/file/upload', data=file, content_type='multipart/form-data')
-        file_json = data.get_json()
+        file_metadata_list = data.get_json()
+        file_metadata_first_item = file_metadata_list[0]
 
-        self.assertEqual(file_json, [{'filename': 'test.txt', 'path': 'test_user', 'fileSize': 22}])
+        self.assertEqual(len(file_metadata_list), 1)
+        self.assertTrue({'filename', 'fileSize', 'fileType', 'modifiedDate', 'isDirectory'} ==
+                        file_metadata_first_item.keys())
+
+        self.assertEqual(file_metadata_first_item['filename'], 'test.txt')
+        self.assertEqual(file_metadata_first_item['fileType'], '.txt')
+        self.assertIsNotNone(file_metadata_first_item['modifiedDate'])
+        self.assertIsNotNone(file_metadata_first_item['fileSize'])
+        self.assertFalse(file_metadata_first_item['isDirectory'])
 
     def test_upload_success_empty_data(self):
         self._log_in_user()
@@ -54,19 +94,21 @@ class FileResourceTest(PiFillingTest):
 
         self.assert401(data)
 
-    def test_create_new_file_success(self):
+    def test_create_new_directory_success(self):
         self._log_in_user()
 
-        data = self.client.post('/api/file/new-folder', json={
-            'name': 'Test Folder'
+        data = self.client.post('/api/file/new-directory', json={
+            'name': 'test_directory',
+            'path': 'test_user/'
         })
-        new_folder_json = data.get_json()
+        directory_full_name = data.get_json()
 
-        self.assertEqual(new_folder_json, {'name': 'Test Folder'})
+        self.assertEqual(directory_full_name, {'name': 'test_directory', 'path': 'test_user/'})
 
-    def test_create_new_file_unauthorized(self):
-        data = self.client.post('/api/file/new-folder', json={
-            'name': 'Test Folder'
+    def test_create_new_directory_unauthorized(self):
+        data = self.client.post('/api/file/new-directory', json={
+            'name': 'test_directory',
+            'path': 'test_user/'
         })
 
         self.assert401(data)
