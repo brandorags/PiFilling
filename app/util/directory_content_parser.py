@@ -2,7 +2,7 @@ import os
 import pathlib
 
 from datetime import datetime
-from app.api import FileMetadata
+from app import FileMetadata
 
 
 class DirectoryContentParser(object):
