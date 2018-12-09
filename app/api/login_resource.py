@@ -21,8 +21,8 @@ import traceback
 from flask import request, Blueprint
 from flask_login import login_user
 from werkzeug.security import check_password_hash
-from api.database.db_models import PiFillingUser
-from api.util.http_response_wrapper import ok, unauthorized, internal_server_error
+from app.database import PiFillingUser
+from app import ok, unauthorized, internal_server_error
 
 
 login_resource = Blueprint('login_resource', __name__)
