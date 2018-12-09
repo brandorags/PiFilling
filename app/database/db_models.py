@@ -16,7 +16,7 @@
 # along with PiFilling.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from api import db
+from app.api import db
 
 from typing import Dict
 from flask_login import UserMixin
