@@ -1,8 +1,8 @@
 import unittest
 
 from werkzeug.security import generate_password_hash
-from api import db
-from api.database.db_models import PiFillingUser
+from app import db
+from app.database import PiFillingUser
 from test.pifilling_test import PiFillingTest
 
 
