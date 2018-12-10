@@ -21,7 +21,7 @@ import traceback
 from flask import request, Blueprint
 from flask_login import login_user
 from werkzeug.security import check_password_hash
-from app.database.db_models import PiFillingUser
+from app.database.entities import PiFillingUser
 from app.util.http_response_wrapper import ok, unauthorized, internal_server_error
 
 
