@@ -46,6 +46,9 @@ cors = CORS(app, supports_credentials=True, regex={r'/api/*': {'origins': '*'}})
 
 # init SQLAlchemy
 db = SQLAlchemy(app)
+
+from app.database.entities import *
+
 db.create_all()
 
 
