@@ -1,8 +1,8 @@
 import unittest
 import subprocess
 
-from app import DirectoryContentParser
-from app import FileMetadata
+from app.util.directory_content_parser import DirectoryContentParser
+from app.models.file_metadata import FileMetadata
 
 
 class DirectoryContentParserTest(unittest.TestCase):
