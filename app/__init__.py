@@ -68,7 +68,7 @@ login_manager.init_app(app)
 
 
 # implement session callback functions
-from app.database.db_models import PiFillingUser
+from app.database.entities import PiFillingUser
 
 
 @login_manager.user_loader
