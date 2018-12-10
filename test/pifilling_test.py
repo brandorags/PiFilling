@@ -1,7 +1,7 @@
 import logging
 
 from flask_testing import TestCase
-from api import app, db
+from app import app, db
 
 
 class PiFillingTest(TestCase):
