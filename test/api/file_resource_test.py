@@ -6,7 +6,7 @@ import subprocess
 
 from werkzeug.security import generate_password_hash
 from app import db
-from app.database import PiFillingUser
+from app.database.db_models import PiFillingUser
 from test.pifilling_test import PiFillingTest
 
 
