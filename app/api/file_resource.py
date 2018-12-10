@@ -5,9 +5,9 @@ from subprocess import run, SubprocessError
 from flask import request, Blueprint
 from flask_login import login_required, current_user
 from app import files_upload_set
-from app import ok, internal_server_error
-from app import FileMetadata
-from app import DirectoryContentParser
+from app.models.file_metadata import FileMetadata
+from app.util.directory_content_parser import DirectoryContentParser
+from app.util.http_response_wrapper import ok, internal_server_error
 
 
 file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')

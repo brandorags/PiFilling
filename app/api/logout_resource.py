@@ -21,7 +21,7 @@ import traceback
 from typing import Dict
 from flask import Blueprint
 from flask_login import login_required, logout_user
-from app import ok, internal_server_error
+from app.util.http_response_wrapper import ok, internal_server_error
 
 
 logout_resource = Blueprint('logout_resource', __name__)
