@@ -18,26 +18,35 @@
 
 import traceback
 
-from typing import Dict
-from flask import Blueprint
-from flask_login import login_required, logout_user
-from api.util.http_response_wrapper import ok, internal_server_error
+from flask import request, Blueprint
+from flask_login import login_user
+from werkzeug.security import check_password_hash
+from app.database.db_models import PiFillingUser
+from app.util.http_response_wrapper import ok, unauthorized, internal_server_error
 
 
-logout_resource = Blueprint('logout_resource', __name__)
+login_resource = Blueprint('login_resource', __name__)
 
 
-@logout_resource.route('/api/logout', methods=['POST'])
-@login_required
-def logout() -> Dict:
+@login_resource.route('/api/login', methods=['POST'])
+def login() -> PiFillingUser:
     """
-    Logs the user out.
+    Logs the user in.
 
-    :return: a generic success message wrapped in JSON
+    :return: the logged in user
     """
     try:
-        logout_user()
-        return ok({'message': 'You have been logged out.'})
+        data = request.get_json()
+        username = data['username']
+        password = data['password']
+
+        user = PiFillingUser.query.filter_by(username=username).first()
+
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user, remember=False)
+            return ok(user.to_json())
+
+        return unauthorized()
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)

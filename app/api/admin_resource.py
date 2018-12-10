@@ -22,9 +22,9 @@ from typing import Dict
 from flask import request, Blueprint
 from flask_login import login_required, current_user
 from werkzeug.security import generate_password_hash
-from api.util.http_response_wrapper import ok, unauthorized, internal_server_error
-from api import db
-from api.database.db_models import PiFillingUser
+from app import db
+from app.database.db_models import PiFillingUser
+from app.util.http_response_wrapper import ok, unauthorized, internal_server_error
 
 
 admin_resource = Blueprint('admin_resource', __name__)

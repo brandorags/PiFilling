@@ -16,7 +16,7 @@
 # along with PiFilling.  If not, see <https://www.gnu.org/licenses/>.
 
 
-from api import app
+from app import app
 
 
 if __name__ == '__main__':
