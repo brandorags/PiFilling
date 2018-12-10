@@ -4,10 +4,10 @@ from typing import List
 from subprocess import run, SubprocessError
 from flask import request, Blueprint
 from flask_login import login_required, current_user
-from api import app, files_upload_set
-from api.util.http_response_wrapper import ok, internal_server_error
-from api.models.file_metadata import FileMetadata
-from api.util.directory_content_parser import DirectoryContentParser
+from app import files_upload_set
+from app.models.file_metadata import FileMetadata
+from app.util.directory_content_parser import DirectoryContentParser
+from app.util.http_response_wrapper import ok, internal_server_error
 
 
 file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')

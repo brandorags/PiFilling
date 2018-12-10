@@ -46,17 +46,14 @@ cors = CORS(app, supports_credentials=True, regex={r'/api/*': {'origins': '*'}})
 
 # init SQLAlchemy
 db = SQLAlchemy(app)
-
-from api.database import db_models
-
 db.create_all()
 
 
 # register blueprints
-from api.resources.login_resource import login_resource
-from api.resources.logout_resource import logout_resource
-from api.resources.file_resource import file_resource
-from api.resources.admin_resource import admin_resource
+from app.api import login_resource
+from app.api import logout_resource
+from app.api import file_resource
+from app.api import admin_resource
 
 app.register_blueprint(login_resource)
 app.register_blueprint(logout_resource)
@@ -71,7 +68,7 @@ login_manager.init_app(app)
 
 
 # implement session callback functions
-from api.database.db_models import PiFillingUser
+from app.database.db_models import PiFillingUser
 
 
 @login_manager.user_loader
