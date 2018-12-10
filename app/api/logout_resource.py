@@ -24,10 +24,10 @@ from flask_login import login_required, logout_user
 from app.util.http_response_wrapper import ok, internal_server_error
 
 
-logout_resource = Blueprint('logout_resource', __name__)
+logout_resource = Blueprint('logout_resource', __name__, url_prefix='/api/logout')
 
 
-@logout_resource.route('/api/logout', methods=['POST'])
+@logout_resource.route('', methods=['POST'])
 @login_required
 def logout() -> Dict:
     """

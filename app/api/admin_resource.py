@@ -27,10 +27,10 @@ from app.database.db_models import PiFillingUser
 from app.util.http_response_wrapper import ok, unauthorized, internal_server_error
 
 
-admin_resource = Blueprint('admin_resource', __name__)
+admin_resource = Blueprint('admin_resource', __name__, url_prefix='/api/admin')
 
 
-@admin_resource.route('/api/admin/create-user', methods=['POST'])
+@admin_resource.route('create-user', methods=['POST'])
 @login_required
 def create_user() -> Dict:
     """
