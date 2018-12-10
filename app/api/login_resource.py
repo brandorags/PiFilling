@@ -25,10 +25,10 @@ from app.database.db_models import PiFillingUser
 from app.util.http_response_wrapper import ok, unauthorized, internal_server_error
 
 
-login_resource = Blueprint('login_resource', __name__)
+login_resource = Blueprint('login_resource', __name__, url_prefix='/api/login')
 
 
-@login_resource.route('/api/login', methods=['POST'])
+@login_resource.route('', methods=['POST'])
 def login() -> PiFillingUser:
     """
     Logs the user in.
