@@ -1,7 +1,7 @@
 import unittest
 
 from test.pifilling_test import PiFillingTest
-from app import ok, unauthorized, internal_server_error
+from app.util.http_response_wrapper import ok, unauthorized, internal_server_error
 
 
 class HttpResponseWrapperTest(PiFillingTest):
