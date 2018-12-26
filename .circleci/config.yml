@@ -55,7 +55,7 @@ jobs:
       - run:
           name: Check Results Contents
           command: |
-            cat ./test/test-reports/unittest
+            cat ./test/test-reports/unittest/results.xml
 
       - store_artifacts:
           path: test/test-reports/unittest
