@@ -49,7 +49,6 @@ jobs:
       - run:
           name: run tests
           command: |
-            set -e
             . venv/bin/activate
             PYTHONPATH=./ python test/test_runner.py
 
