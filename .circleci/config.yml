@@ -52,5 +52,13 @@ jobs:
             . venv/bin/activate
             PYTHONPATH=./ python test/test_runner.py
 
+      - run:
+          name: Check Results Contents
+          command: |
+            cat ./test/test-reports/unittest
+
+      - store_artifacts:
+          path: test/test-reports/unittest
+
       - store_test_results:
           path: test/test-reports/unittest
