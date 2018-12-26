@@ -21,6 +21,8 @@ jobs:
     steps:
       - checkout
 
+      - run: mkdir -p test/test-reports/unittest
+
       # download and cache dependencies
       - restore_cache:
           keys:
@@ -51,8 +53,4 @@ jobs:
             PYTHONPATH=./ python test/test_runner.py
 
       - store_test_results:
-          path: test-results
-
-#      - store_artifacts:
-#          path: test-results
-#          destination: test-results
+          path: test/test-reports/unittest
