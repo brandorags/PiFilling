@@ -7,6 +7,9 @@ venv/
 # test file upload folder
 files/
 
+# test reports for CircleCI folder
+test/test-reports
+
 # config file
 # app_config.py
 
