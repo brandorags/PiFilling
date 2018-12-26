@@ -14,6 +14,6 @@ if __name__ == '__main__':
     if not results_dir.is_dir():
         os.makedirs(results_dir.as_posix())
 
-    with open(results_dir.as_posix() + 'results.xml', 'wb') as results_file:
+    with open(results_dir.as_posix() + '/results.xml', 'wb') as results_file:
         runner = xmlrunner.XMLTestRunner(output=results_file)
         runner.run(test_suite)
