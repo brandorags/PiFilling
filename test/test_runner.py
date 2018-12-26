@@ -15,7 +15,7 @@ if __name__ == '__main__':
         os.makedirs(results_dir.as_posix())
 
     with open(results_dir.as_posix() + '/results.xml', 'wb') as results_file:
-        runner = xmlrunner.XMLTestRunner(output=results_file, failfast=True)
+        runner = xmlrunner.XMLTestRunner(output=results_file)
         result = runner.run(test_suite)
 
     if not result.wasSuccessful():
