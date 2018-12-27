@@ -15,6 +15,8 @@ class DirectoryContentParserTest(unittest.TestCase):
             with open(temp_dir + '/temp' + str(i) + '.txt', 'w') as file:
                 file.write('Test test test')
 
+        subprocess.run(['mkdir', temp_dir + '/temp_directory1'])
+
     def tearDown(self):
         subprocess.run(['rm', '-rf', 'temp_directory'])
 
@@ -22,10 +24,7 @@ class DirectoryContentParserTest(unittest.TestCase):
         file_metadata_list = DirectoryContentParser.parse_directory_content('./temp_directory')
         file_metadata_first_item = file_metadata_list[0]
 
-        for f in file_metadata_list:
-            print(f.filename)
-
-        self.assertEqual(len(file_metadata_list), 5)
+        self.assertEqual(len(file_metadata_list), 6)
         self.assertTrue(isinstance(file_metadata_first_item, FileMetadata))
         self.assertEqual(file_metadata_first_item.filename, 'temp0.txt')
         self.assertEqual(file_metadata_first_item.file_type, '.txt')
