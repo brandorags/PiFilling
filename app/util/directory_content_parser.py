@@ -25,4 +25,4 @@ class DirectoryContentParser(object):
                                              modified_date=modified_date, is_directory=is_dir)
                 file_metadata_list.append(file_metadata)
 
-        return file_metadata_list
+        return sorted(file_metadata_list, key=lambda fm: fm.filename)
