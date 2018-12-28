@@ -23,7 +23,7 @@ class FileResourceTest(PiFillingTest):
         db.session.add(user)
         db.session.commit()
 
-        temp_dir = 'temp_directory'
+        temp_dir = self.app.config['UPLOADED_FILES_DEST'] + '/temp_directory'
         subprocess.run(['mkdir', temp_dir])
         for i in range(0, 5):
             with open(temp_dir + '/temp' + str(i) + '.txt', 'w') as file:
@@ -37,7 +37,7 @@ class FileResourceTest(PiFillingTest):
         if path_exists:
             shutil.rmtree(test_file_upload_folder_path)
 
-        shutil.rmtree('temp_directory')
+        shutil.rmtree(self.app.config['UPLOADED_FILES_DEST'] + '/temp_directory')
 
     def test_get_file_metadata_list_for_path_success(self):
         self._log_in_user()
