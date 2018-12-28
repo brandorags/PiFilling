@@ -17,7 +17,7 @@ file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')
 @login_required
 def get_file_metadata_list_for_path() -> List[FileMetadata]:
     try:
-        path = request.args.get('path')
+        path = files_upload_set.config.destination + '/' + request.args.get('path')
         file_metadata_list = DirectoryContentParser.parse_directory_content(path)
 
         return ok([metadata.to_json() for metadata in file_metadata_list])
@@ -56,7 +56,7 @@ def create_new_directory() -> [str]:
         directory_name = data['name']
         path = data['path']
 
-        absolute_path = files_upload_set.config.destination + '/' + path + directory_name
+        absolute_path = files_upload_set.config.destination + '/' + path + '/' + directory_name
 
         create_new_directory_proc = run(['mkdir', '-p', absolute_path], capture_output=True)
         if create_new_directory_proc.returncode != 0:
