@@ -1,6 +1,5 @@
 import unittest
 import shutil
-import os
 import io
 import subprocess
 
@@ -23,7 +22,10 @@ class FileResourceTest(PiFillingTest):
         db.session.add(user)
         db.session.commit()
 
-        temp_dir = self.app.config['UPLOADED_FILES_DEST'] + '/temp_directory'
+        base_dir = self.app.config['UPLOADED_FILES_DEST']
+        subprocess.run(['mkdir', base_dir])
+
+        temp_dir = base_dir + '/temp_directory'
         subprocess.run(['mkdir', temp_dir])
         for i in range(0, 5):
             with open(temp_dir + '/temp' + str(i) + '.txt', 'w') as file:
@@ -32,12 +34,7 @@ class FileResourceTest(PiFillingTest):
     def tearDown(self):
         super().tearDown()
 
-        test_file_upload_folder_path = self.app.config['UPLOADED_FILES_DEST'] + '/test_user'
-        path_exists = os.path.exists(test_file_upload_folder_path)
-        if path_exists:
-            shutil.rmtree(test_file_upload_folder_path)
-
-        shutil.rmtree(self.app.config['UPLOADED_FILES_DEST'] + '/temp_directory')
+        shutil.rmtree(self.app.config['UPLOADED_FILES_DEST'])
 
     def test_get_file_metadata_list_for_path_success(self):
         self._log_in_user()
