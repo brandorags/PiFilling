@@ -3,7 +3,7 @@ import traceback
 from typing import List
 from subprocess import run, SubprocessError
 from flask import request, Blueprint
-from flask_login import login_required, current_user
+from flask_login import login_required
 from app import files_upload_set
 from app.models.file_metadata import FileMetadata
 from app.util.directory_content_parser import DirectoryContentParser
@@ -26,23 +26,19 @@ def get_file_metadata_list_for_path() -> List[FileMetadata]:
         return internal_server_error(e, trace)
 
 
-@file_resource.route('upload', methods=['POST'])
+@file_resource.route('upload-file', methods=['POST'])
 @login_required
-def upload() -> List[FileMetadata]:
+def upload_file():
     try:
-        files_to_upload = request.files
-        path = current_user.username
+        file_to_upload = next(iter(request.files.values()))
+        current_directory = request.headers.get('Current-Directory')
 
-        for f in files_to_upload:
-            file = files_to_upload[f]
-            files_upload_set.save(file, path)
+        file_path = files_upload_set.save(file_to_upload, current_directory)
 
-        file_metadata_list = []
-        if files_to_upload:
-            absolute_path = files_upload_set.config.destination + '/' + path
-            file_metadata_list = DirectoryContentParser.parse_directory_content(absolute_path)
+        absolute_path = files_upload_set.config.destination + '/' + file_path
+        file_metadata = DirectoryContentParser.get_file(absolute_path)
 
-        return ok([metadata.to_json() for metadata in file_metadata_list])
+        return ok(file_metadata.to_json())
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
