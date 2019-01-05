@@ -86,11 +86,11 @@ class FileResourceTest(PiFillingTest):
 
         data = self.client.post('/api/file/new-directory', json={
             'name': 'test_directory',
-            'path': 'test_user/'
+            'path': 'test_user'
         })
         directory_full_name = data.get_json()
 
-        self.assertEqual(directory_full_name, {'name': 'test_directory', 'path': 'test_user/'})
+        self.assertEqual(directory_full_name, {'name': 'test_directory', 'path': 'test_user'})
 
     def test_create_new_directory_unauthorized(self):
         data = self.client.post('/api/file/new-directory', json={
