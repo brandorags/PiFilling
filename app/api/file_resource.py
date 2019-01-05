@@ -51,8 +51,9 @@ def create_new_directory() -> [str]:
         data = request.get_json()
         directory_name = data['name']
         path = data['path']
+        directory_path = path + '/' + directory_name
 
-        absolute_path = files_upload_set.config.destination + '/' + path + '/' + directory_name
+        absolute_path = files_upload_set.config.destination + '/' + directory_path
 
         create_new_directory_proc = run(['mkdir', '-p', absolute_path], capture_output=True)
         if create_new_directory_proc.returncode != 0:
