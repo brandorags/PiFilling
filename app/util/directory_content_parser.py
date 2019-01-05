@@ -12,17 +12,33 @@ class DirectoryContentParser(object):
         file_metadata_list = []
 
         with os.scandir(path) as dir_content:
-            for entry in dir_content:
-                entry_stats = entry.stat()
+            for file in dir_content:
+                file_stat = file.stat()
 
-                file_name = entry.name
-                file_size = entry_stats.st_size
-                file_type = pathlib.Path(file_name).suffix
-                modified_date = datetime.fromtimestamp(entry_stats.st_mtime).strftime('%d/%m/%Y %H:%M:%S')
-                is_dir = entry.is_dir()
+                filename = file.name
+                file_size = file_stat.st_size
+                file_type = pathlib.Path(filename).suffix
+                modified_date = datetime.fromtimestamp(file_stat.st_mtime).strftime('%d/%m/%Y %H:%M:%S')
+                is_dir = file.is_dir()
 
-                file_metadata = FileMetadata(filename=file_name, file_size=file_size, file_type=file_type,
+                file_metadata = FileMetadata(filename=filename, file_size=file_size, file_type=file_type,
                                              modified_date=modified_date, is_directory=is_dir)
                 file_metadata_list.append(file_metadata)
 
         return sorted(file_metadata_list, key=lambda fm: fm.filename)
+
+    @staticmethod
+    def get_file(filename_with_path):
+        file = pathlib.Path(filename_with_path)
+        file_stat = file.stat()
+
+        filename = file.name
+        file_size = file_stat.st_size
+        file_type = file.suffix
+        modified_date = datetime.fromtimestamp(file_stat.st_mtime).strftime('%d/%m/%Y %H:%M:%S')
+        is_dir = file.is_dir()
+
+        file_metadata = FileMetadata(filename=filename, file_size=file_size, file_type=file_type,
+                                     modified_date=modified_date, is_directory=is_dir)
+
+        return file_metadata

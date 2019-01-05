@@ -58,36 +58,26 @@ class FileResourceTest(PiFillingTest):
 
         self.assert401(data)
 
-    def test_upload_success(self):
+    def test_upload_file_success(self):
         self._log_in_user()
         file = self._get_test_file()
 
-        data = self.client.post('/api/file/upload', data=file, content_type='multipart/form-data')
-        file_metadata_list = data.get_json()
-        file_metadata_first_item = file_metadata_list[0]
+        data = self.client.post('/api/file/upload-file', data=file, content_type='multipart/form-data')
+        file_metadata = data.get_json()
 
-        self.assertEqual(len(file_metadata_list), 1)
         self.assertTrue({'filename', 'fileSize', 'fileType', 'modifiedDate', 'isDirectory'} ==
-                        file_metadata_first_item.keys())
+                        file_metadata.keys())
 
-        self.assertEqual(file_metadata_first_item['filename'], 'test.txt')
-        self.assertEqual(file_metadata_first_item['fileType'], '.txt')
-        self.assertIsNotNone(file_metadata_first_item['modifiedDate'])
-        self.assertIsNotNone(file_metadata_first_item['fileSize'])
-        self.assertFalse(file_metadata_first_item['isDirectory'])
+        self.assertEqual(file_metadata['filename'], 'test.txt')
+        self.assertEqual(file_metadata['fileType'], '.txt')
+        self.assertIsNotNone(file_metadata['modifiedDate'])
+        self.assertIsNotNone(file_metadata['fileSize'])
+        self.assertFalse(file_metadata['isDirectory'])
 
-    def test_upload_success_empty_data(self):
-        self._log_in_user()
-
-        data = self.client.post('/api/file/upload', content_type='multipart/form-data')
-        file_json = data.get_json()
-
-        self.assertEqual(file_json, [])
-
-    def test_upload_unauthorized(self):
+    def test_upload_file_unauthorized(self):
         file = self._get_test_file()
 
-        data = self.client.post('/api/file/upload', data=file, content_type='multipart/form-data')
+        data = self.client.post('/api/file/upload-file', data=file, content_type='multipart/form-data')
 
         self.assert401(data)
 

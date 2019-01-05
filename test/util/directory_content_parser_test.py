@@ -32,8 +32,15 @@ class DirectoryContentParserTest(unittest.TestCase):
         self.assertIsNotNone(file_metadata_first_item.file_size)
         self.assertFalse(file_metadata_first_item.is_directory)
 
-    def test_parse_directory_content_error(self):
-        self.assertRaises(Exception, DirectoryContentParser.parse_directory_content, './nonexistent_directory')
+    def test_get_file(self):
+        file_metadata = DirectoryContentParser.get_file('./temp_directory/temp0.txt')
+
+        self.assertTrue(isinstance(file_metadata, FileMetadata))
+        self.assertEqual(file_metadata.filename, 'temp0.txt')
+        self.assertEqual(file_metadata.file_type, '.txt')
+        self.assertIsNotNone(file_metadata.modified_date)
+        self.assertIsNotNone(file_metadata.file_size)
+        self.assertFalse(file_metadata.is_directory)
 
 
 if __name__ == '__main__':
