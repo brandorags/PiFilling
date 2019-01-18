@@ -14,6 +14,7 @@
 
 
 import traceback
+import os
 
 from typing import List
 from subprocess import run, SubprocessError
@@ -54,6 +55,26 @@ def upload_file():
         file_metadata = DirectoryContentParser.get_file(absolute_path)
 
         return ok(file_metadata.to_json())
+    except Exception as e:
+        trace = traceback.format_exc()
+        return internal_server_error(e, trace)
+
+
+@file_resource.route('rename-file', methods=['POST'])
+@login_required
+def rename_file():
+    try:
+        data = request.get_json()
+        old_filename = data['oldFilename']
+        new_filename = data['newFilename']
+        path = data['path']
+
+        absolute_path_old_filename = files_upload_set.config.destination + '/' + path + '/' + old_filename
+        absolute_path_new_filename = files_upload_set.config.destination + '/' + path + '/' + new_filename
+
+        os.rename(absolute_path_old_filename, absolute_path_new_filename)
+
+        return ok(new_filename)
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
