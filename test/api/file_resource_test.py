@@ -96,6 +96,18 @@ class FileResourceTest(PiFillingTest):
 
         self.assert401(data)
 
+    def test_rename_file_success(self):
+        self._log_in_user()
+
+        data = self.client.post('/api/file/rename-file', json={
+            'oldFilename': 'temp0.txt',
+            'newFilename': 'new_filename.txt',
+            'path': 'temp_directory'
+        })
+        new_filename = data.get_json()
+
+        self.assertEqual(new_filename, 'new_filename.txt')
+
     def test_create_new_directory_success(self):
         self._log_in_user()
 
