@@ -128,6 +128,48 @@ class FileResourceTest(PiFillingTest):
 
         self.assert500(data)
 
+    def test_delete_file_success_file(self):
+        self._log_in_user()
+
+        data = self.client.delete('/api/file/delete-file', json={
+            'filename': 'temp0.txt',
+            'path': 'temp_directory',
+            'isDirectory': False
+        })
+
+        self.assert200(data)
+
+    def test_delete_file_success_directory(self):
+        self._log_in_user()
+
+        data = self.client.delete('/api/file/delete-file', json={
+            'filename': 'temp_directory',
+            'path': '',
+            'isDirectory': True
+        })
+
+        self.assert200(data)
+
+    def test_delete_file_unauthorized(self):
+        data = self.client.delete('/api/file/delete-file', json={
+            'filename': 'temp0.txt',
+            'path': 'temp_directory',
+            'isDirectory': False
+        })
+
+        self.assert401(data)
+
+    def test_delete_file_error(self):
+        self._log_in_user()
+
+        data = self.client.delete('/api/file/delete-file', json={
+            'filename': 'this_file_does_not_exist.txt',
+            'path': 'temp_directory',
+            'isDirectory': False
+        })
+
+        self.assert500(data)
+
     def test_create_new_directory_success(self):
         self._log_in_user()
 
@@ -142,7 +184,7 @@ class FileResourceTest(PiFillingTest):
     def test_create_new_directory_unauthorized(self):
         data = self.client.post('/api/file/new-directory', json={
             'name': 'test_directory',
-            'path': 'test_user/'
+            'path': 'test_user'
         })
 
         self.assert401(data)
