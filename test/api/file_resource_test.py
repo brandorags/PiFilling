@@ -108,6 +108,26 @@ class FileResourceTest(PiFillingTest):
 
         self.assertEqual(new_filename, 'new_filename.txt')
 
+    def test_rename_file_unauthorized(self):
+        data = self.client.post('/api/file/rename-file', json={
+            'oldFilename': 'temp0.txt',
+            'newFilename': 'new_filename.txt',
+            'path': 'temp_directory'
+        })
+
+        self.assert401(data)
+
+    def test_rename_file_error(self):
+        self._log_in_user()
+
+        data = self.client.post('/api/file/rename-file', json={
+            'oldFilename': 'this_file_does_not_exist.txt',
+            'newFilename': 'new_filename.txt',
+            'path': 'temp_directory'
+        })
+
+        self.assert500(data)
+
     def test_create_new_directory_success(self):
         self._log_in_user()
 
