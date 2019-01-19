@@ -14,6 +14,7 @@
 
 
 import traceback
+import shutil
 import os
 
 from typing import List
@@ -75,6 +76,28 @@ def rename_file():
         os.rename(absolute_path_old_filename, absolute_path_new_filename)
 
         return ok(new_filename)
+    except Exception as e:
+        trace = traceback.format_exc()
+        return internal_server_error(e, trace)
+
+
+@file_resource.route('delete-file', methods=['DELETE'])
+@login_required
+def delete_file():
+    try:
+        data = request.get_json()
+        filename = data['filename']
+        path = data['path']
+        is_directory = data['isDirectory']
+
+        absolute_path_file_to_delete = files_upload_set.config.destination + '/' + path + '/' + filename
+
+        if is_directory:
+            shutil.rmtree(absolute_path_file_to_delete)
+        else:
+            os.remove(absolute_path_file_to_delete)
+
+        return ok()
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
