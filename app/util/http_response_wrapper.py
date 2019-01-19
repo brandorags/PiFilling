@@ -19,7 +19,7 @@ import logging
 from flask import jsonify
 
 
-def ok(obj):
+def ok(obj=None):
     """
     Helper function that returns a specified object
     and a Success status code (200). The specified
