@@ -81,21 +81,22 @@ def rename_file():
         return internal_server_error(e, trace)
 
 
-@file_resource.route('delete-file', methods=['DELETE'])
+@file_resource.route('delete-files', methods=['DELETE'])
 @login_required
 def delete_file():
     try:
         data = request.get_json()
-        filename = data['filename']
-        path = data['path']
-        is_directory = data['isDirectory']
+        for d in data:
+            filename = d['filename']
+            path = d['path']
+            is_directory = d['isDirectory']
 
-        absolute_path_file_to_delete = files_upload_set.config.destination + '/' + path + '/' + filename
+            absolute_path_file_to_delete = files_upload_set.config.destination + '/' + path + '/' + filename
 
-        if is_directory:
-            shutil.rmtree(absolute_path_file_to_delete)
-        else:
-            os.remove(absolute_path_file_to_delete)
+            if is_directory:
+                shutil.rmtree(absolute_path_file_to_delete)
+            else:
+                os.remove(absolute_path_file_to_delete)
 
         return ok()
     except Exception as e:
