@@ -128,45 +128,58 @@ class FileResourceTest(PiFillingTest):
 
         self.assert500(data)
 
-    def test_delete_file_success_file(self):
+    def test_delete_files_success_files(self):
         self._log_in_user()
 
-        data = self.client.delete('/api/file/delete-file', json={
-            'filename': 'temp0.txt',
-            'path': 'temp_directory',
-            'isDirectory': False
-        })
+        data = self.client.delete('/api/file/delete-files', json=[
+            {
+                'filename': 'temp0.txt',
+                'path': 'temp_directory',
+                'isDirectory': False
+            },
+            {
+                'filename': 'temp1.txt',
+                'path': 'temp_directory',
+                'isDirectory': False
+            }
+        ])
 
         self.assert200(data)
 
-    def test_delete_file_success_directory(self):
+    def test_delete_files_success_directory(self):
         self._log_in_user()
 
-        data = self.client.delete('/api/file/delete-file', json={
-            'filename': 'temp_directory',
-            'path': '',
-            'isDirectory': True
-        })
+        data = self.client.delete('/api/file/delete-files', json=[
+            {
+                'filename': 'temp_directory',
+                'path': '',
+                'isDirectory': True
+            }
+        ])
 
         self.assert200(data)
 
-    def test_delete_file_unauthorized(self):
-        data = self.client.delete('/api/file/delete-file', json={
-            'filename': 'temp0.txt',
-            'path': 'temp_directory',
-            'isDirectory': False
-        })
+    def test_delete_files_unauthorized(self):
+        data = self.client.delete('/api/file/delete-files', json=[
+            {
+                'filename': 'temp0.txt',
+                'path': 'temp_directory',
+                'isDirectory': False
+            }
+        ])
 
         self.assert401(data)
 
-    def test_delete_file_error(self):
+    def test_delete_files_error(self):
         self._log_in_user()
 
-        data = self.client.delete('/api/file/delete-file', json={
-            'filename': 'this_file_does_not_exist.txt',
-            'path': 'temp_directory',
-            'isDirectory': False
-        })
+        data = self.client.delete('/api/file/delete-files', json=[
+            {
+                'filename': 'this_file_does_not_exist.txt',
+                'path': 'temp_directory',
+                'isDirectory': False
+            }
+        ])
 
         self.assert500(data)
 
