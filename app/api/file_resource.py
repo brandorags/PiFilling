@@ -18,7 +18,6 @@ import shutil
 import os
 
 from typing import List
-from subprocess import run, SubprocessError
 from flask import request, Blueprint
 from flask_login import login_required
 from app import files_upload_set
@@ -114,10 +113,7 @@ def create_new_directory() -> [str]:
         directory_path = path + '/' + directory_name
 
         absolute_path = files_upload_set.config.destination + '/' + directory_path
-
-        create_new_directory_proc = run(['mkdir', '-p', absolute_path], capture_output=True)
-        if create_new_directory_proc.returncode != 0:
-            raise SubprocessError(create_new_directory_proc.stderr)
+        os.mkdir(absolute_path)
 
         return ok({
             'name': directory_name,

@@ -16,7 +16,7 @@
 import unittest
 import shutil
 import io
-import subprocess
+import os
 
 from werkzeug.security import generate_password_hash
 from app import db
@@ -38,10 +38,10 @@ class FileResourceTest(PiFillingTest):
         db.session.commit()
 
         base_dir = self.app.config['UPLOADED_FILES_DEST']
-        subprocess.run(['mkdir', base_dir])
+        os.mkdir(base_dir)
 
         temp_dir = base_dir + '/temp_directory'
-        subprocess.run(['mkdir', temp_dir])
+        os.mkdir(temp_dir)
         for i in range(0, 5):
             with open(temp_dir + '/temp' + str(i) + '.txt', 'w') as file:
                 file.write('Test test test')
@@ -187,17 +187,17 @@ class FileResourceTest(PiFillingTest):
         self._log_in_user()
 
         data = self.client.post('/api/file/new-directory', json={
-            'name': 'test_directory',
-            'path': 'test_user'
+            'name': 'new_directory',
+            'path': 'temp_directory'
         })
         directory_full_name = data.get_json()
 
-        self.assertEqual(directory_full_name, {'name': 'test_directory', 'path': 'test_user'})
+        self.assertEqual(directory_full_name, {'name': 'new_directory', 'path': 'temp_directory'})
 
     def test_create_new_directory_unauthorized(self):
         data = self.client.post('/api/file/new-directory', json={
-            'name': 'test_directory',
-            'path': 'test_user'
+            'name': 'new_directory',
+            'path': 'temp_directory'
         })
 
         self.assert401(data)
