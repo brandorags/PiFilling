@@ -128,6 +128,76 @@ class FileResourceTest(PiFillingTest):
 
         self.assert500(data)
 
+    def test_move_files_success_files(self):
+        self._log_in_user()
+
+        subsubdirectory = self.app.config['UPLOADED_FILES_DEST'] + '/' + 'temp_directory' + '/' + \
+            'subdirectory' + '/' + 'subsubdirectory'
+        os.makedirs(subsubdirectory)
+
+        data = self.client.post('/api/file/move-files', json=[
+            {
+                'sourcePath': 'temp_directory/temp0.txt',
+                'destinationPath': 'temp_directory/subdirectory/subsubdirectory'
+            },
+            {
+                'sourcePath': 'temp_directory/temp3.txt',
+                'destinationPath': 'temp_directory/subdirectory/subsubdirectory'
+            }
+        ])
+
+        self.assert200(data)
+
+    def test_move_files_success_directories(self):
+        self._log_in_user()
+
+        subsubdirectory = self.app.config['UPLOADED_FILES_DEST'] + '/' + 'temp_directory' + '/' + \
+            'subdirectory' + '/' + 'subsubdirectory'
+        os.makedirs(subsubdirectory)
+
+        other_subsubdirectory = self.app.config['UPLOADED_FILES_DEST'] + '/' + 'temp_directory' + '/' + \
+            'subdirectory' + '/' + 'other_subsubdirectory'
+        os.makedirs(other_subsubdirectory)
+
+        data = self.client.post('/api/file/move-files', json=[
+            {
+                'sourcePath': 'temp_directory/subdirectory/subsubdirectory',
+                'destinationPath': 'temp_directory'
+            },
+            {
+                'sourcePath': 'temp_directory/subdirectory/other_subsubdirectory',
+                'destinationPath': 'temp_directory'
+            }
+        ])
+
+        self.assert200(data)
+
+    def test_move_files_unauthorized(self):
+        data = self.client.post('/api/file/move-files', json=[
+            {
+                'sourcePath': 'temp_directory/temp0.txt',
+                'destinationPath': 'temp_directory/subdirectory/subsubdirectory'
+            },
+            {
+                'sourcePath': 'temp_directory/temp3.txt',
+                'destinationPath': 'temp_directory/subdirectory/subsubdirectory'
+            }
+        ])
+
+        self.assert401(data)
+
+    def test_move_files_error(self):
+        self._log_in_user()
+
+        data = self.client.post('/api/file/move-files', json=[
+            {
+                'sourcePath': 'temp_directory/temp0.txt',
+                'destinationPath': 'nonexistent_directory'
+            }
+        ])
+
+        self.assert500(data)
+
     def test_delete_files_success_files(self):
         self._log_in_user()
 

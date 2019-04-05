@@ -80,9 +80,30 @@ def rename_file():
         return internal_server_error(e, trace)
 
 
+@file_resource.route('move-files', methods=['POST'])
+@login_required
+def move_files():
+    try:
+        absolute_path = files_upload_set.config.destination
+        data = request.get_json()
+        for d in data:
+            source_path = absolute_path + '/' + d['sourcePath']
+            destination_path = absolute_path + '/' + d['destinationPath']
+
+            if os.path.exists(destination_path) and os.path.isdir(destination_path):
+                shutil.move(source_path, destination_path)
+            else:
+                raise Exception('The destination path ' + destination_path + ' does not exist.')
+
+        return ok()
+    except Exception as e:
+        trace = traceback.format_exc()
+        return internal_server_error(e, trace)
+
+
 @file_resource.route('delete-files', methods=['DELETE'])
 @login_required
-def delete_file():
+def delete_files():
     try:
         data = request.get_json()
         for d in data:
