@@ -46,6 +46,9 @@ class FileResourceTest(PiFillingTest):
             with open(temp_dir + '/temp' + str(i) + '.txt', 'w') as file:
                 file.write('Test test test')
 
+        os.mkdir(temp_dir + '/temp_directory1')
+        os.mkdir(temp_dir + '/temp_directory2')
+
     def tearDown(self):
         super().tearDown()
 
@@ -58,7 +61,7 @@ class FileResourceTest(PiFillingTest):
         file_metadata_list = data.get_json()
         file_metadata_first_item = file_metadata_list[0]
 
-        self.assertEqual(len(file_metadata_list), 5)
+        self.assertEqual(len(file_metadata_list), 7)
         self.assertTrue({'filename', 'fileSize', 'fileType', 'modifiedDate', 'isDirectory'} ==
                         file_metadata_first_item.keys())
 
@@ -70,6 +73,23 @@ class FileResourceTest(PiFillingTest):
 
     def test_get_file_metadata_list_for_path_unauthorized(self):
         data = self.client.get('/api/file/file-metadata?path=temp_directory')
+
+        self.assert401(data)
+
+    def test_get_directory_list_for_path_success(self):
+        self._log_in_user()
+
+        data = self.client.get('/api/file/directory-list?path=temp_directory')
+        directory_list = data.get_json()
+        directory_list_first_item = directory_list[0]
+
+        self.assertEqual(len(directory_list), 2)
+        self.assertTrue({'directoryName', 'path'} == directory_list_first_item.keys())
+        self.assertEqual(directory_list_first_item['directoryName'], 'temp_directory1')
+        self.assertEqual(directory_list_first_item['path'], 'temp_directory')
+
+    def test_get_directory_list_for_path_unauthorized(self):
+        data = self.client.get('/api/file/directory-list?path=temp_directory')
 
         self.assert401(data)
 

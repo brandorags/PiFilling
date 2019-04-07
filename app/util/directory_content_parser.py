@@ -15,45 +15,67 @@
 
 import os
 import pathlib
+from app import files_upload_set
 
 from datetime import datetime
 from app.models.file_metadata import FileMetadata
+from app.models.directory_path import DirectoryPath
 
 
 class DirectoryContentParser(object):
 
     @staticmethod
-    def parse_directory_content(path):
+    def parse_directory_content(directory_path):
         file_metadata_list = []
+        absolute_path = files_upload_set.config.destination + '/' + directory_path
 
-        with os.scandir(path) as dir_content:
-            for file in dir_content:
+        with os.scandir(absolute_path) as directory_content:
+            for file in directory_content:
                 file_stat = file.stat()
 
                 filename = file.name
                 file_size = file_stat.st_size
                 file_type = pathlib.Path(filename).suffix
                 modified_date = datetime.fromtimestamp(file_stat.st_mtime).strftime('%d/%m/%Y %H:%M:%S')
-                is_dir = file.is_dir()
+                is_directory = file.is_dir()
 
                 file_metadata = FileMetadata(filename=filename, file_size=file_size, file_type=file_type,
-                                             modified_date=modified_date, is_directory=is_dir)
+                                             modified_date=modified_date, is_directory=is_directory)
                 file_metadata_list.append(file_metadata)
 
         return sorted(file_metadata_list, key=lambda fm: fm.filename)
 
     @staticmethod
-    def get_file(filename_with_path):
-        file = pathlib.Path(filename_with_path)
+    def get_directory_list(dir_path):
+        directory_list = []
+        absolute_path = files_upload_set.config.destination + '/' + dir_path
+
+        with os.scandir(absolute_path) as directory_content:
+            for directory in directory_content:
+                if not directory.is_dir():
+                    continue
+
+                directory_name = directory.name
+                directory_path = DirectoryPath(directory_name=directory_name, path=dir_path)
+
+                directory_list.append(directory_path)
+
+        return sorted(directory_list, key=lambda dp: dp.directory_name)
+
+    @staticmethod
+    def get_file(file_path):
+        absolute_path = files_upload_set.config.destination + '/' + file_path
+
+        file = pathlib.Path(absolute_path)
         file_stat = file.stat()
 
         filename = file.name
         file_size = file_stat.st_size
         file_type = file.suffix
         modified_date = datetime.fromtimestamp(file_stat.st_mtime).strftime('%d/%m/%Y %H:%M:%S')
-        is_dir = file.is_dir()
+        is_directory = file.is_dir()
 
         file_metadata = FileMetadata(filename=filename, file_size=file_size, file_type=file_type,
-                                     modified_date=modified_date, is_directory=is_dir)
+                                     modified_date=modified_date, is_directory=is_directory)
 
         return file_metadata
