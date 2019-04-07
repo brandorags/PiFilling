@@ -17,11 +17,9 @@ import traceback
 import shutil
 import os
 
-from typing import List
 from flask import request, Blueprint
 from flask_login import login_required
 from app import files_upload_set
-from app.models.file_metadata import FileMetadata
 from app.util.directory_content_parser import DirectoryContentParser
 from app.util.http_response_wrapper import ok, internal_server_error
 
@@ -31,12 +29,25 @@ file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')
 
 @file_resource.route('file-metadata', methods=['GET'])
 @login_required
-def get_file_metadata_list_for_path() -> List[FileMetadata]:
+def get_file_metadata_list_for_path():
     try:
-        path = files_upload_set.config.destination + '/' + request.args.get('path')
+        path = request.args.get('path')
         file_metadata_list = DirectoryContentParser.parse_directory_content(path)
 
         return ok([metadata.to_json() for metadata in file_metadata_list])
+    except Exception as e:
+        trace = traceback.format_exc()
+        return internal_server_error(e, trace)
+    
+    
+@file_resource.route('directory-list', methods=['GET'])
+@login_required
+def get_directory_list_for_path():
+    try:
+        path = request.args.get('path')
+        directory_list = DirectoryContentParser.get_directory_list(path)
+
+        return ok([directory.to_json() for directory in directory_list])
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
@@ -50,9 +61,7 @@ def upload_file():
         current_directory = request.headers.get('Current-Directory')
 
         file_path = files_upload_set.save(file_to_upload, current_directory)
-
-        absolute_path = files_upload_set.config.destination + '/' + file_path
-        file_metadata = DirectoryContentParser.get_file(absolute_path)
+        file_metadata = DirectoryContentParser.get_file(file_path)
 
         return ok(file_metadata.to_json())
     except Exception as e:
@@ -126,7 +135,7 @@ def delete_files():
 
 @file_resource.route('new-directory', methods=['POST'])
 @login_required
-def create_new_directory() -> [str]:
+def create_new_directory():
     try:
         data = request.get_json()
         directory_name = data['name']
