@@ -28,7 +28,6 @@ class PiFillingTest(TestCase):
         app.config['TESTING'] = True
         app.config['BASE_DIR'] = os.path.abspath(os.path.dirname(__file__))
         app.config['LOG_FILE_LOC'] = os.path.join(app.config['BASE_DIR'], 'info.log')
-        app.config['UPLOADED_FILES_DEST'] = app.config['BASE_DIR'] + '/files'
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite://'
 
         # override Flask-Uploads configuration
