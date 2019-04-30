@@ -15,6 +15,7 @@
 
 import logging
 
+from logging.handlers import TimedRotatingFileHandler
 from flask import Flask, session
 from flask_uploads import UploadSet, ALL, configure_uploads, patch_request_class
 from flask_cors import CORS
@@ -26,20 +27,22 @@ from flask_login import LoginManager
 app = Flask(__name__)
 app.config.from_pyfile('../app_config.py')
 
-
 # init Flask-Uploads
 files_upload_set = UploadSet('files', ALL)
 configure_uploads(app, files_upload_set)
 patch_request_class(app, size=5000000000)
 
 # init logging
-logging.basicConfig(filename=app.config['LOG_FILE_LOC'], format='[%(levelname)s] %(asctime)s: %(message)s',
-                    datefmt='%m/%d/%Y %I:%M:%S %p', level=logging.WARNING)
+logger_formatter = logging.Formatter(fmt='[%(levelname)s] %(asctime)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+logger_handler = TimedRotatingFileHandler(filename=app.config['LOG_FILE_LOC'], when='midnight')
+logger_handler.setFormatter(logger_formatter)
 
+logger = logging.getLogger()
+logger.setLevel(logging.WARNING)
+logger.addHandler(logger_handler)
 
 # allow CORS
 cors = CORS(app, supports_credentials=True, regex={r'/api/*': {'origins': '*'}})
-
 
 # init SQLAlchemy
 db = SQLAlchemy(app)
@@ -47,7 +50,6 @@ db = SQLAlchemy(app)
 from app.database.entities import *
 
 db.create_all()
-
 
 # register blueprints
 from app.api import login_resource
@@ -60,12 +62,10 @@ app.register_blueprint(logout_resource)
 app.register_blueprint(file_resource)
 app.register_blueprint(admin_resource)
 
-
 # init Flask-Login
 login_manager = LoginManager()
 login_manager.session_protection = 'strong'
 login_manager.init_app(app)
-
 
 # implement session callback functions
 from app.database.entities import PiFillingUser

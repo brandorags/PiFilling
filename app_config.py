@@ -15,7 +15,7 @@ PORT = 5000
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # path of log file
-LOG_FILE_LOC = os.path.join(BASE_DIR, 'info.log')
+LOG_FILE_LOC = os.path.join(BASE_DIR + '/logs', 'info.log')
 
 # file upload folder
 UPLOADED_FILES_DEST = BASE_DIR + '/files'
