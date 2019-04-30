@@ -15,6 +15,10 @@ jobs:
       - checkout
 
       - run:
+          name: Create Empty Log File Directory
+          command: mkdir logs
+
+      - run:
           name: Create Unit Test Reports Directory
           command: mkdir -p test/test-reports/unittest
 
