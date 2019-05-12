@@ -84,8 +84,8 @@ class FileResourceTest(PiFillingTest):
         directory_list_first_item = directory_list[0]
 
         self.assertEqual(len(directory_list), 2)
-        self.assertTrue({'directoryName', 'path'} == directory_list_first_item.keys())
-        self.assertEqual(directory_list_first_item['directoryName'], 'temp_directory1')
+        self.assertTrue({'name', 'path'} == directory_list_first_item.keys())
+        self.assertEqual(directory_list_first_item['name'], 'temp_directory1')
         self.assertEqual(directory_list_first_item['path'], 'temp_directory')
 
     def test_get_directory_list_for_path_unauthorized(self):
