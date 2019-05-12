@@ -64,7 +64,7 @@ class DirectoryContentParserTest(PiFillingTest):
 
         self.assertEqual(len(directory_list), 2)
         self.assertTrue(isinstance(directory_list_first_item, DirectoryPath))
-        self.assertEqual(directory_list_first_item.directory_name, 'temp_directory1')
+        self.assertEqual(directory_list_first_item.name, 'temp_directory1')
         self.assertEqual(directory_list_first_item.path, 'temp_directory')
 
     def test_get_file(self):

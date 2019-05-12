@@ -15,8 +15,8 @@
 
 class DirectoryPath(object):
 
-    def __init__(self, directory_name, path):
-        self.directory_name = directory_name
+    def __init__(self, name, path):
+        self.name = name
         self.path = path
 
     def to_json(self):
@@ -27,6 +27,6 @@ class DirectoryPath(object):
         :return: a JSON version of DirectoryPath
         """
         return {
-            'directoryName': self.directory_name,
+            'name': self.name,
             'path': self.path
         }
