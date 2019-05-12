@@ -56,11 +56,11 @@ class DirectoryContentParser(object):
                     continue
 
                 directory_name = directory.name
-                directory_path = DirectoryPath(directory_name=directory_name, path=dir_path)
+                directory_path = DirectoryPath(name=directory_name, path=dir_path)
 
                 directory_list.append(directory_path)
 
-        return sorted(directory_list, key=lambda dp: dp.directory_name)
+        return sorted(directory_list, key=lambda dp: dp.name)
 
     @staticmethod
     def get_file(file_path):
