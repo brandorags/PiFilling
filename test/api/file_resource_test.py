@@ -51,7 +51,6 @@ class FileResourceTest(PiFillingTest):
 
     def tearDown(self):
         super().tearDown()
-
         shutil.rmtree(self.app.config['UPLOADED_FILES_DEST'])
 
     def test_get_file_metadata_list_for_path_success(self):
@@ -96,12 +95,13 @@ class FileResourceTest(PiFillingTest):
     def test_upload_file_success(self):
         self._log_in_user()
         file = self._get_test_file()
+        headers = {'Current-Directory': 'temp_directory'}
 
-        data = self.client.post('/api/file/upload-file', data=file, content_type='multipart/form-data')
+        data = self.client.post('/api/file/upload-file', data=file, content_type='multipart/form-data',
+                                headers=headers)
         file_metadata = data.get_json()
 
-        self.assertTrue({'filename', 'fileSize', 'fileType', 'modifiedDate', 'isDirectory'} ==
-                        file_metadata.keys())
+        self.assertTrue({'filename', 'fileSize', 'fileType', 'modifiedDate', 'isDirectory'} == file_metadata.keys())
 
         self.assertEqual(file_metadata['filename'], 'test.txt')
         self.assertEqual(file_metadata['fileType'], '.txt')
