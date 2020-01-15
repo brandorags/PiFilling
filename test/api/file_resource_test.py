@@ -41,13 +41,19 @@ class FileResourceTest(PiFillingTest):
         os.mkdir(base_dir)
 
         temp_dir = base_dir + '/temp_directory'
+        temp_dir_1 = temp_dir + '/temp_directory1'
+        temp_dir_2 = temp_dir_1 + '/temp_directory2'
         os.mkdir(temp_dir)
+        os.mkdir(temp_dir_1)
+        os.mkdir(temp_dir_2)
+
         for i in range(0, 5):
             with open(temp_dir + '/temp' + str(i) + '.txt', 'w') as file:
                 file.write('Test test test')
 
-        os.mkdir(temp_dir + '/temp_directory1')
-        os.mkdir(temp_dir + '/temp_directory2')
+        for i in range(0, 3):
+            with open(temp_dir_1 + '/tempOne' + str(i) + '.txt', 'w') as file:
+                file.write('Test test test')
 
     def tearDown(self):
         super().tearDown()
@@ -60,7 +66,7 @@ class FileResourceTest(PiFillingTest):
         file_metadata_list = data.get_json()
         file_metadata_first_item = file_metadata_list[0]
 
-        self.assertEqual(len(file_metadata_list), 7)
+        self.assertEqual(len(file_metadata_list), 6)
         self.assertTrue({'filename', 'fileSize', 'fileType', 'modifiedDate', 'isDirectory'} ==
                         file_metadata_first_item.keys())
 
@@ -82,7 +88,7 @@ class FileResourceTest(PiFillingTest):
         directory_list = data.get_json()
         directory_list_first_item = directory_list[0]
 
-        self.assertEqual(len(directory_list), 2)
+        self.assertEqual(len(directory_list), 1)
         self.assertTrue({'name', 'path'} == directory_list_first_item.keys())
         self.assertEqual(directory_list_first_item['name'], 'temp_directory1')
         self.assertEqual(directory_list_first_item['path'], 'temp_directory')
@@ -215,6 +221,72 @@ class FileResourceTest(PiFillingTest):
                 'destinationPath': 'nonexistent_directory'
             }
         ])
+
+        self.assert500(data)
+
+    def test_download_files_success_single_file(self):
+        self._log_in_user()
+
+        data = self.client.post('/api/file/download-files', json={
+                'path': 'temp_directory',
+                'files': [
+                    {'filename': 'temp0.txt', 'isDirectory': False}
+                ]
+            }
+        )
+
+        self.assert200(data)
+
+    def test_download_files_success_single_directory(self):
+        self._log_in_user()
+
+        data = self.client.post('/api/file/download-files', json={
+                'path': 'temp_directory',
+                'files': [
+                    {'filename': 'temp_directory1', 'isDirectory': True}
+                ]
+            }
+        )
+
+        self.assert200(data)
+
+    def test_download_files_success_multiple(self):
+        self._log_in_user()
+
+        data = self.client.post('/api/file/download-files', json={
+                'path': 'temp_directory',
+                'files': [
+                    {'filename': 'temp0.txt', 'isDirectory': False},
+                    {'filename': 'temp1.txt', 'isDirectory': False},
+                    {'filename': 'temp2.txt', 'isDirectory': False},
+                    {'filename': 'temp_directory1', 'isDirectory': True}
+                ]
+            }
+        )
+
+        self.assert200(data)
+
+    def test_download_files_unauthorized(self):
+        data = self.client.post('/api/file/download-files', json={
+                'path': 'temp_directory',
+                'files': [
+                    {'filename': 'temp0.txt', 'isDirectory': False}
+                ]
+            }
+        )
+
+        self.assert401(data)
+
+    def test_download_files_error(self):
+        self._log_in_user()
+
+        data = self.client.post('/api/file/download-files', json={
+                'path': 'temp_directory',
+                'files': [
+                    {'filename': 'nonexistent_file.txt', 'isDirectory': False}
+                ]
+            }
+        )
 
         self.assert500(data)
 
