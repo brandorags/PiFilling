@@ -42,7 +42,8 @@ logger.setLevel(logging.WARNING)
 logger.addHandler(logger_handler)
 
 # allow CORS
-cors = CORS(app, supports_credentials=True, regex={r'/api/*': {'origins': '*'}})
+cors = CORS(app, supports_credentials=True, expose_headers=['Content-Disposition'],
+            regex={r'/api/*': {'origins': '*'}})
 
 # init SQLAlchemy
 db = SQLAlchemy(app)

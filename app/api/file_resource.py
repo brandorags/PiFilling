@@ -17,7 +17,8 @@ import traceback
 import shutil
 import os
 
-from flask import request, Blueprint
+from zipfile import ZipFile
+from flask import request, Blueprint, send_file, send_from_directory
 from flask_login import login_required
 from app import files_upload_set
 from app.util.directory_content_parser import DirectoryContentParser
@@ -105,6 +106,65 @@ def move_files():
                 raise Exception('The destination path ' + destination_path + ' does not exist.')
 
         return ok()
+    except Exception as e:
+        trace = traceback.format_exc()
+        return internal_server_error(e, trace)
+
+
+@file_resource.route('download-files', methods=['POST'])
+@login_required
+def download_files():
+    try:
+        data = request.get_json()
+        download_path = data['path']
+        files_to_download = data['files']
+
+        base_upload_dir = files_upload_set.config.destination
+        current_dir = base_upload_dir + '/' + download_path
+        parent_dir = os.path.dirname(current_dir)
+
+        os.chdir(base_upload_dir)
+
+        if len(files_to_download) == 1:
+            file = files_to_download[0]
+            filename = file['filename']
+            filename_no_spaces = '_'.join(filename.split())
+            is_zip_file = False
+
+            if file['isDirectory']:
+                shutil.make_archive(filename_no_spaces, 'zip', current_dir + '/' + filename)
+                filename_no_spaces += '.zip'
+                is_zip_file = True
+
+            # the zip file path will always be at the base upload directory
+            dir_to_send_from = base_upload_dir if is_zip_file else current_dir
+            filename = filename_no_spaces if is_zip_file else filename
+
+            return send_from_directory(dir_to_send_from, filename, as_attachment=True)
+
+        filenames_to_download = [f['filename'] for f in files_to_download]
+        dir_paths_to_download = [current_dir + '/' + f['filename'] for f in files_to_download if f['isDirectory']]
+        zip_file_name = '_'.join(current_dir.split()) + '.zip'
+
+        with ZipFile(zip_file_name, 'w') as zf:
+            for root, subdirs, files in os.walk(current_dir):
+                for subdir in subdirs:
+                    subdir_abs_path = os.path.join(root, subdir)
+                    if len([dir_path for dir_path in dir_paths_to_download if dir_path in subdir_abs_path]) == 0:
+                        continue
+
+                    subdir_rel_path = subdir_abs_path.replace(parent_dir + '/', '')
+                    zf.write(subdir_abs_path, subdir_rel_path)
+                for filename in files:
+                    file_abs_path = os.path.join(root, filename)
+                    if filename not in filenames_to_download and \
+                            len([dir_path for dir_path in dir_paths_to_download if dir_path in file_abs_path]) == 0:
+                        continue
+
+                    file_rel_path = file_abs_path.replace(parent_dir + '/', '')
+                    zf.write(file_abs_path, file_rel_path)
+
+        return send_file(zip_file_name, mimetype='zip', attachment_filename=zip_file_name, as_attachment=True)
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
