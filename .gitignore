@@ -4,6 +4,9 @@ venv/
 # PyCharm
 .idea/
 
+# VS Code
+.vscode/
+
 # test file upload folder
 files/
 
