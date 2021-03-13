@@ -27,7 +27,7 @@ class DownloadHelperTest(PiFillingTest):
     def setUp(self):
         super().setUp()
 
-        base_dir = self.app.config['UPLOADED_FILES_DEST']
+        base_dir = self.app.config['UPLOAD_FOLDER']
         os.mkdir(base_dir)
 
         temp_dir = base_dir + '/temp_directory'
@@ -47,12 +47,12 @@ class DownloadHelperTest(PiFillingTest):
 
     def tearDown(self):
         super().tearDown()
-        shutil.rmtree(self.app.config['UPLOADED_FILES_DEST'])
+        shutil.rmtree(self.app.config['UPLOAD_FOLDER'])
 
     def test_download_file_file(self):
         file = {'filename': 'temp0.txt', 'isDirectory': False}
         download_path = 'temp_directory'
-        base_upload_dir_path = self.app.config['UPLOADED_FILES_DEST']
+        base_upload_dir_path = self.app.config['UPLOAD_FOLDER']
         file_response = DownloadHelper.download_file(file, download_path, base_upload_dir_path)
 
         self.assertIn('temp0.txt', file_response.response.file.name)
@@ -60,7 +60,7 @@ class DownloadHelperTest(PiFillingTest):
     def test_download_file_directory(self):
         file = {'filename': 'temp_directory', 'isDirectory': True}
         download_path = ''
-        base_upload_dir_path = self.app.config['UPLOADED_FILES_DEST']
+        base_upload_dir_path = self.app.config['UPLOAD_FOLDER']
         file_response = DownloadHelper.download_file(file, download_path, base_upload_dir_path)
 
         self.assertIn('temp_directory.zip', file_response.response.file.name)
@@ -73,7 +73,7 @@ class DownloadHelperTest(PiFillingTest):
             {'filename': 'temp_directory1', 'isDirectory': True}
         ]
         download_path = 'temp_directory'
-        base_upload_dir_path = self.app.config['UPLOADED_FILES_DEST']
+        base_upload_dir_path = self.app.config['UPLOAD_FOLDER']
         file_response = DownloadHelper.download_multiple_files(files, download_path, base_upload_dir_path)
 
         self.assertIn('temp_directory.zip', file_response.response.file.name)

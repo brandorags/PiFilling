@@ -14,10 +14,10 @@
 
 
 import logging
+import os
 
 from logging.handlers import TimedRotatingFileHandler
 from flask import Flask, session
-from flask_uploads import UploadSet, ALL, configure_uploads, patch_request_class
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
@@ -26,11 +26,6 @@ from flask_login import LoginManager
 # init Flask
 app = Flask(__name__)
 app.config.from_pyfile('../app_config.py')
-
-# init Flask-Uploads
-files_upload_set = UploadSet('files', ALL)
-configure_uploads(app, files_upload_set)
-patch_request_class(app, size=5000000000)
 
 # init logging
 logger_formatter = logging.Formatter(fmt='[%(levelname)s] %(asctime)s: %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
@@ -51,6 +46,14 @@ db = SQLAlchemy(app)
 from app.database.entities import *
 
 db.create_all()
+
+# create upload directory if it doesn't already exist
+is_debug_mode = app.config['DEBUG']
+if is_debug_mode:
+    upload_directory_path = app.config['UPLOAD_FOLDER']
+    upload_directory_exists = os.path.exists(upload_directory_path)
+    if not upload_directory_exists:
+        os.mkdir(upload_directory_path)
 
 # register blueprints
 from app.api import login_resource

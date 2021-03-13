@@ -37,7 +37,7 @@ class FileResourceTest(PiFillingTest):
         db.session.add(user)
         db.session.commit()
 
-        base_dir = self.app.config['UPLOADED_FILES_DEST']
+        base_dir = self.app.config['UPLOAD_FOLDER']
         os.mkdir(base_dir)
 
         temp_dir = base_dir + '/temp_directory'
@@ -57,7 +57,7 @@ class FileResourceTest(PiFillingTest):
 
     def tearDown(self):
         super().tearDown()
-        shutil.rmtree(self.app.config['UPLOADED_FILES_DEST'])
+        shutil.rmtree(self.app.config['UPLOAD_FOLDER'])
 
     def test_get_file_metadata_list_for_path_success(self):
         self._log_in_user()
@@ -157,7 +157,7 @@ class FileResourceTest(PiFillingTest):
     def test_move_files_success_files(self):
         self._log_in_user()
 
-        subsubdirectory = self.app.config['UPLOADED_FILES_DEST'] + '/' + 'temp_directory' + '/' + \
+        subsubdirectory = self.app.config['UPLOAD_FOLDER'] + '/' + 'temp_directory' + '/' + \
             'subdirectory' + '/' + 'subsubdirectory'
         os.makedirs(subsubdirectory)
 
@@ -177,11 +177,11 @@ class FileResourceTest(PiFillingTest):
     def test_move_files_success_directories(self):
         self._log_in_user()
 
-        subsubdirectory = self.app.config['UPLOADED_FILES_DEST'] + '/' + 'temp_directory' + '/' + \
+        subsubdirectory = self.app.config['UPLOAD_FOLDER'] + '/' + 'temp_directory' + '/' + \
             'subdirectory' + '/' + 'subsubdirectory'
         os.makedirs(subsubdirectory)
 
-        other_subsubdirectory = self.app.config['UPLOADED_FILES_DEST'] + '/' + 'temp_directory' + '/' + \
+        other_subsubdirectory = self.app.config['UPLOAD_FOLDER'] + '/' + 'temp_directory' + '/' + \
             'subdirectory' + '/' + 'other_subsubdirectory'
         os.makedirs(other_subsubdirectory)
 

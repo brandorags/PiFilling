@@ -28,7 +28,7 @@ class DirectoryContentParserTest(PiFillingTest):
     def setUp(self):
         super().setUp()
 
-        base_dir = self.app.config['UPLOADED_FILES_DEST']
+        base_dir = self.app.config['UPLOAD_FOLDER']
         os.mkdir(base_dir)
 
         temp_dir = base_dir + '/temp_directory'
@@ -43,11 +43,11 @@ class DirectoryContentParserTest(PiFillingTest):
 
     def tearDown(self):
         super().tearDown()
-
-        shutil.rmtree(self.app.config['UPLOADED_FILES_DEST'])
+        shutil.rmtree(self.app.config['UPLOAD_FOLDER'])
 
     def test_parse_directory_content(self):
-        file_metadata_list = DirectoryContentParser.parse_directory_content('temp_directory')
+        path = self.app.config['UPLOAD_FOLDER'] + '/' + 'temp_directory'
+        file_metadata_list = DirectoryContentParser.parse_directory_content(path)
         file_metadata_first_item = file_metadata_list[0]
 
         self.assertEqual(len(file_metadata_list), 7)
@@ -59,16 +59,18 @@ class DirectoryContentParserTest(PiFillingTest):
         self.assertFalse(file_metadata_first_item.is_directory)
 
     def test_get_directory_list(self):
-        directory_list = DirectoryContentParser.get_directory_list('temp_directory')
+        path = self.app.config['UPLOAD_FOLDER'] + '/' + 'temp_directory'
+        directory_list = DirectoryContentParser.get_directory_list(path)
         directory_list_first_item = directory_list[0]
 
         self.assertEqual(len(directory_list), 2)
         self.assertTrue(isinstance(directory_list_first_item, DirectoryPath))
         self.assertEqual(directory_list_first_item.name, 'temp_directory1')
-        self.assertEqual(directory_list_first_item.path, 'temp_directory')
+        self.assertEqual(directory_list_first_item.path, path)
 
     def test_get_file(self):
-        file_metadata = DirectoryContentParser.get_file('temp_directory/temp0.txt')
+        path = self.app.config['UPLOAD_FOLDER'] + '/' + 'temp_directory/temp0.txt'
+        file_metadata = DirectoryContentParser.get_file(path)
 
         self.assertTrue(isinstance(file_metadata, FileMetadata))
         self.assertEqual(file_metadata.filename, 'temp0.txt')

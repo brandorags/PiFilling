@@ -19,7 +19,8 @@ import os
 
 from flask import request, Blueprint
 from flask_login import login_required
-from app import files_upload_set
+from werkzeug.utils import secure_filename
+from app import app
 from app.util.download_helper import DownloadHelper
 from app.util.directory_content_parser import DirectoryContentParser
 from app.util.http_response_wrapper import ok, internal_server_error
@@ -32,7 +33,7 @@ file_resource = Blueprint('file_resource', __name__, url_prefix='/api/file')
 @login_required
 def get_file_metadata_list_for_path():
     try:
-        path = request.args.get('path')
+        path = _get_base_directory() + '/' + request.args.get('path')
         file_metadata_list = DirectoryContentParser.parse_directory_content(path)
 
         return ok([metadata.to_json() for metadata in file_metadata_list])
@@ -45,7 +46,7 @@ def get_file_metadata_list_for_path():
 @login_required
 def get_directory_list_for_path():
     try:
-        path = request.args.get('path')
+        path = _get_base_directory() + '/' + request.args.get('path')
         directory_list = DirectoryContentParser.get_directory_list(path)
 
         return ok([directory.to_json() for directory in directory_list])
@@ -60,8 +61,12 @@ def upload_file():
     try:
         file_to_upload = next(iter(request.files.values()))
         current_directory = request.headers.get('Current-Directory')
+        filename = secure_filename(file_to_upload.filename)
+        file_path = os.path.join(_get_base_directory() + '/' + current_directory, filename)
 
-        file_path = files_upload_set.save(file_to_upload, current_directory)
+        file_to_upload.save(file_path)
+        file_to_upload.close()
+
         file_metadata = DirectoryContentParser.get_file(file_path)
 
         return ok(file_metadata.to_json())
@@ -79,8 +84,8 @@ def rename_file():
         new_filename = data['newFilename']
         path = data['path']
 
-        absolute_path_old_filename = files_upload_set.config.destination + '/' + path + '/' + old_filename
-        absolute_path_new_filename = files_upload_set.config.destination + '/' + path + '/' + new_filename
+        absolute_path_old_filename = _get_base_directory() + '/' + path + '/' + old_filename
+        absolute_path_new_filename = _get_base_directory() + '/' + path + '/' + new_filename
 
         os.rename(absolute_path_old_filename, absolute_path_new_filename)
 
@@ -94,11 +99,10 @@ def rename_file():
 @login_required
 def move_files():
     try:
-        absolute_path = files_upload_set.config.destination
         data = request.get_json()
         for d in data:
-            source_path = absolute_path + '/' + d['sourcePath']
-            destination_path = absolute_path + '/' + d['destinationPath']
+            source_path = _get_base_directory() + '/' + d['sourcePath']
+            destination_path = _get_base_directory() + '/' + d['destinationPath']
 
             if os.path.exists(destination_path) and os.path.isdir(destination_path):
                 shutil.move(source_path, destination_path)
@@ -119,13 +123,11 @@ def download_files():
         download_path = data['path']
         files_to_download = data['files']
 
-        base_upload_dir = files_upload_set.config.destination
-
         if len(files_to_download) == 1:
             file = files_to_download[0]
-            return DownloadHelper.download_file(file, download_path, base_upload_dir)
+            return DownloadHelper.download_file(file, download_path, _get_base_directory())
         else:
-            return DownloadHelper.download_multiple_files(files_to_download, download_path, base_upload_dir)
+            return DownloadHelper.download_multiple_files(files_to_download, download_path, _get_base_directory())
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
@@ -141,7 +143,7 @@ def delete_files():
             path = d['path']
             is_directory = d['isDirectory']
 
-            absolute_path_file_to_delete = files_upload_set.config.destination + '/' + path + '/' + filename
+            absolute_path_file_to_delete = _get_base_directory() + '/' + path + '/' + filename
 
             if is_directory:
                 shutil.rmtree(absolute_path_file_to_delete)
@@ -163,7 +165,7 @@ def create_new_directory():
         path = data['path']
         directory_path = path + '/' + directory_name
 
-        absolute_path = files_upload_set.config.destination + '/' + directory_path
+        absolute_path = _get_base_directory() + '/' + directory_path
         os.mkdir(absolute_path)
 
         return ok({
@@ -173,3 +175,7 @@ def create_new_directory():
     except Exception as e:
         trace = traceback.format_exc()
         return internal_server_error(e, trace)
+
+
+def _get_base_directory():
+    return app.config['UPLOAD_FOLDER']

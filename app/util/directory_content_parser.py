@@ -15,7 +15,6 @@
 
 import os
 import pathlib
-from app import files_upload_set
 
 from datetime import datetime
 from app.models.file_metadata import FileMetadata
@@ -27,9 +26,8 @@ class DirectoryContentParser(object):
     @staticmethod
     def parse_directory_content(directory_path):
         file_metadata_list = []
-        absolute_path = files_upload_set.config.destination + '/' + directory_path
 
-        with os.scandir(absolute_path) as directory_content:
+        with os.scandir(directory_path) as directory_content:
             for file in directory_content:
                 file_stat = file.stat()
 
@@ -46,27 +44,24 @@ class DirectoryContentParser(object):
         return sorted(file_metadata_list, key=lambda fm: fm.filename)
 
     @staticmethod
-    def get_directory_list(dir_path):
+    def get_directory_list(directory_path):
         directory_list = []
-        absolute_path = files_upload_set.config.destination + '/' + dir_path
 
-        with os.scandir(absolute_path) as directory_content:
+        with os.scandir(directory_path) as directory_content:
             for directory in directory_content:
                 if not directory.is_dir():
                     continue
 
                 directory_name = directory.name
-                directory_path = DirectoryPath(name=directory_name, path=dir_path)
+                path = DirectoryPath(name=directory_name, path=directory_path)
 
-                directory_list.append(directory_path)
+                directory_list.append(path)
 
         return sorted(directory_list, key=lambda dp: dp.name)
 
     @staticmethod
     def get_file(file_path):
-        absolute_path = files_upload_set.config.destination + '/' + file_path
-
-        file = pathlib.Path(absolute_path)
+        file = pathlib.Path(file_path)
         file_stat = file.stat()
 
         filename = file.name
