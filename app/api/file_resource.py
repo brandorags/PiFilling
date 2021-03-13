@@ -62,7 +62,11 @@ def upload_file():
         file_to_upload = next(iter(request.files.values()))
         current_directory = request.headers.get('Current-Directory')
         filename = secure_filename(file_to_upload.filename)
-        file_path = os.path.join(_get_base_directory() + '/' + current_directory, filename)
+        directory_path = _get_base_directory() + '/' + current_directory
+        file_path = os.path.join(directory_path, filename)
+
+        if not os.path.exists(directory_path):
+            os.makedirs(directory_path)
 
         file_to_upload.save(file_path)
         file_to_upload.close()
@@ -166,7 +170,8 @@ def create_new_directory():
         directory_path = path + '/' + directory_name
 
         absolute_path = _get_base_directory() + '/' + directory_path
-        os.mkdir(absolute_path)
+        if not os.path.exists(absolute_path):
+            os.mkdir(absolute_path)
 
         return ok({
             'name': directory_name,
