@@ -15,7 +15,6 @@
 
 from app import db
 
-from typing import Dict
 from flask_login import UserMixin
 
 
@@ -26,7 +25,7 @@ class PiFillingUser(UserMixin, db.Model):
     password_hash = db.Column(db.String, nullable=False)
     is_admin = db.Column(db.Boolean)
 
-    def to_json(self) -> Dict:
+    def to_json(self):
         """
         Returns a dictionary with keys in the JSON standard
         camel case format.
@@ -37,4 +36,46 @@ class PiFillingUser(UserMixin, db.Model):
         return {
             'username': self.username,
             'isAdmin': self.is_admin
+        }
+
+
+class DirectoryPath(db.Model):
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('pifilling_user.id'), nullable=False)
+    absolute_path = db.Column(db.String, unique=True, nullable=False)
+    directory_name = db.Column(db.String, index=True, nullable=False)
+
+    def to_json(self):
+        """
+        Returns a dictionary with keys in the JSON standard
+        camel case format.
+
+        :return: a JSON safe version of DirectoryPath that
+        doesn't contain the user's ID or password hash
+        """
+        return {
+            'absolutePath': self.absolute_path,
+            'directoryName': self.directory_name
+        }
+
+
+class Filename(db.Model):
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('pifilling_user.id'), nullable=False)
+    directory_id = db.Column(db.Integer, db.ForeignKey('directory_path.id'), nullable=False)
+    filename = db.Column(db.String, index=True, nullable=False)
+
+    __table_args__ = (db.UniqueConstraint('directory_id', 'filename', name='uc_directory_id_filename'),)
+
+    def to_json(self):
+        """
+        Returns a dictionary with keys in the JSON standard
+        camel case format.
+
+        :return: a JSON safe version of Filename that
+        doesn't contain the user's ID or password hash
+        """
+        return {
+            'directoryId': self.directory_id,
+            'filename': self.filename
         }

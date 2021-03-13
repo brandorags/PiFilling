@@ -22,6 +22,7 @@ from flask_login import login_required
 from werkzeug.utils import secure_filename
 from app import app
 from app.util.download_helper import DownloadHelper
+from app.util.file_index_service import FileIndexService
 from app.util.directory_content_parser import DirectoryContentParser
 from app.util.http_response_wrapper import ok, internal_server_error
 
@@ -71,7 +72,8 @@ def upload_file():
         file_to_upload.save(file_path)
         file_to_upload.close()
 
-        file_metadata = DirectoryContentParser.get_file(file_path)
+        # save the file path to the database for faster searching
+        file_metadata = FileIndexService.save_file_path(current_user.id, file_path, absolute_path)
 
         return ok(file_metadata.to_json())
     except Exception as e:
