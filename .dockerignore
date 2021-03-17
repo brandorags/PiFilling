@@ -1,0 +1,9 @@
+.circleci/
+.idea/
+.vscode/
+
+files/
+test/
+
+venv/
+__pycache__/
