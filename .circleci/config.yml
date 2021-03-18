@@ -9,7 +9,7 @@ jobs:
     docker:
       - image: circleci/python:3.8.8
 
-    working_directory: ~/PiFilling/backend
+    working_directory: ~/PiFilling
 
     steps:
       - checkout
