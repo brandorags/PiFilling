@@ -1,0 +1,26 @@
+version: "3.8"
+
+services: 
+  backend:
+    image: pifilling_backend
+
+    build: ./backend
+
+    container_name: pifilling_backend
+
+    restart: always
+
+    expose: 
+      - 8000
+
+  server:
+    image: pifilling_server
+
+    build: ./server
+
+    container_name: pifilling_server
+
+    restart: always
+
+    ports:
+      - "80:80"

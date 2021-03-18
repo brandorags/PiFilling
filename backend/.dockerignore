@@ -3,6 +3,7 @@
 .vscode/
 
 files/
+logs/
 test/
 
 venv/
