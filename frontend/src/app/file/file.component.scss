@@ -1,0 +1,94 @@
+/*
+Copyright Brandon Ragsdale
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+
+.mat-progress-spinner {
+  margin: 0 auto;
+}
+
+.mat-button {
+  font-size: 16px !important;
+}
+
+.file-card {
+  width: 167px;
+  overflow-wrap: break-word;
+  cursor: pointer;
+  
+  img {
+    height: 200px;
+    width: 200px;
+    object-fit: contain;
+  }
+
+  mat-icon {
+    font-size: 50px;
+  }
+}
+
+.file-card-selected {
+  outline: rgba(255, 64, 129, .6) auto 5px !important;
+}
+
+.file-card-container {
+  margin: 20px;
+}
+
+.file-drop-active {
+  background-color: rgba(63, 81, 181, 0.4);
+}
+
+.queued-file-list-header {
+  position: fixed;
+  bottom: 69px;
+  right: 15px;
+  height: 40px;
+  width: 300px;
+  color: white;
+  background-color: rgb(63, 81, 181);
+  border: 1px solid rgba(0, 0, 0, .2);
+}
+
+.queued-file-list-header-title {
+  padding-left: 10px;
+  line-height: 2.3;
+}
+
+.queued-file-list-header-close {
+  padding-right: 10px;
+  line-height: 1.48;
+  float: right;
+  cursor: pointer;
+}
+
+.queued-file-list-body {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  max-height: 54px;
+  width: 300px;
+  overflow-y: auto;
+  border-bottom: 1px solid rgba(0, 0, 0, .2);
+  border-right: 1px solid rgba(0, 0, 0, .2);
+  border-left: 1px solid rgba(0, 0, 0, .2);
+}
+
+.folder-path {
+  text-align: left;
+  font-size: 1.3em;
+  margin-top: 0.9em;
+  margin-left: 0.7em;
+}

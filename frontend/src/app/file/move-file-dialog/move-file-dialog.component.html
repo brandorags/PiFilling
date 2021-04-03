@@ -1,0 +1,38 @@
+<!--
+Copyright Brandon Ragsdale
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+
+<h1 mat-dialog-title>Move File(s)/Folder(s)</h1>
+<div mat-dialog-content>
+  <div *ngIf="!isLoading; else loadingSpinner">
+    <button mat-icon-button (click)="navigateOneFolderUp()"><mat-icon>arrow_back</mat-icon></button> {{currentFolder.name}}
+    <button mat-icon-button class="forward-button" (click)="navigateOneFolderDown()"><mat-icon>arrow_forward</mat-icon></button>
+    <mat-radio-group class="vertical-radio-group" [(ngModel)]="selectedFolder">
+      <mat-radio-button class="vertical-radio-button" *ngFor="let folder of folderList" [value]="folder">
+        <span class="disable-highlight">
+          <mat-icon>folder</mat-icon> {{folder.name}}
+        </span>
+      </mat-radio-button>
+    </mat-radio-group>
+  </div>
+  <ng-template #loadingSpinner>
+    <mat-spinner color="accent"></mat-spinner>
+  </ng-template>
+</div>
+<div mat-dialog-actions>
+  <button mat-button [disabled]="selectedFolder.name === undefined" [mat-dialog-close]="selectedFolder">Move</button>
+  <button mat-button (click)="closeDialog()">Cancel</button>
+</div>

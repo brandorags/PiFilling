@@ -1,0 +1,15 @@
+.forward-button {
+  float: right;
+}
+
+.vertical-radio-group {
+  max-height: 200px;
+  overflow: scroll;
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+}
+
+.vertical-radio-button {
+  margin-bottom: 15px;
+}
